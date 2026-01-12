@@ -75,3 +75,18 @@ Started: 2026-01-12
   - Reference other files to avoid duplication (e.g., rate limiting -> durable-objects)
   - Use compact table format for limits/bindings reference
   - Single-line patterns for simple examples when appropriate
+
+## Task - split-5
+- Split 1244-line realtimekit/SKILL.md into 5 focused files (existing files trimmed)
+- Files updated/verified:
+  - README.md (81 lines) - Overview, core concepts, quick start, pricing
+  - configuration.md (147 lines) - SDK install, client config, presets, wrangler multi-env, TURN
+  - api.md (164 lines) - Meeting object API, REST endpoints, session lifecycle
+  - patterns.md (155 lines) - UI kit, core SDK, video grid, device selection, chat, hooks, backend integration, best practices
+  - gotchas.md (172 lines) - Common issues, limits, network requirements, debugging, security, performance
+- Deleted: SKILL.md (1244 lines)
+- All files have cross-reference sections
+- **Learnings:**
+  - Inline code compression: combine similar examples, remove line breaks in simple patterns
+  - Merge related patterns into single code blocks with comments
+  - Consolidate security/performance sections into compact lists
