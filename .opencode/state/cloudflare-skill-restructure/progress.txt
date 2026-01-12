@@ -252,3 +252,20 @@ Started: 2026-01-12
   - Parallel task agent execution for bulk conversions
   - Text references in prose also need updating (README links, error messages, CLI examples)
   - One acceptable dual-format reference remains in pipelines (wrangler.toml/wrangler.jsonc)
+
+## Task - fix-4
+- Added missing imports to all agents-sdk code examples in patterns.md
+- Files changed:
+  - skill/cloudflare/references/agents-sdk/patterns.md (90→96 lines, 6 import statements added)
+- Changes:
+  - Chat example: added `import {Agent, Connection, ConnectionContext, WSMessage} from "agents"`
+  - AI w/Tools example: added `import {Agent, Connection, WSMessage} from "agents"` (tool/zod imports already present)
+  - Streaming example: added `import {Agent, Connection, WSMessage} from "agents"` (OpenAI import already present)
+  - Cron/Scheduled example: added `import {Agent} from "agents"`
+  - Email+AI example: added `import {Agent, AgentEmail, Connection} from "agents"`
+  - Game example: added `import {Agent, Connection, ConnectionContext, WSMessage} from "agents"`
+- **Learnings:**
+  - Import only types/classes used in each example (minimal imports)
+  - Task spec highlighted agents-sdk + tool from 'ai' but broader verification found all missing Agent/Connection/WSMessage imports
+  - No type checking available in docs-only repo, verification by visual inspection
+  - Pattern: Each standalone code example should include necessary imports for copy-paste usage

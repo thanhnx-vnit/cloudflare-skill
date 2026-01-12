@@ -218,7 +218,7 @@
         "agents-sdk examples include import { tool } from 'ai'",
         "All code examples have necessary imports"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "polish-1",

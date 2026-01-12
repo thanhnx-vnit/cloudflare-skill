@@ -3,6 +3,7 @@
 ## Chat
 
 ```ts
+import {Agent, Connection, ConnectionContext, WSMessage} from "agents";
 export class ChatAgent extends Agent<Env, ChatState> {
   initialState = {messages: [], participants: []};
   async onConnect(conn: Connection, ctx: ConnectionContext) {
@@ -23,6 +24,7 @@ export class ChatAgent extends Agent<Env, ChatState> {
 ## AI w/Tools
 
 ```ts
+import {Agent, Connection, WSMessage} from "agents";
 import {tool} from "ai"; import {z} from "zod";
 const weatherTool = tool({description: "Get weather", inputSchema: z.object({city: z.string()}), execute: async ({city}) => `Weather: ${city} Sunny 72°F`});
 export class AIAgent extends Agent<Env> {
@@ -37,6 +39,7 @@ export class AIAgent extends Agent<Env> {
 ## Streaming
 
 ```ts
+import {Agent, Connection, WSMessage} from "agents";
 import {OpenAI} from "openai";
 export class StreamingAgent extends Agent<Env> {
   async onMessage(conn: Connection, msg: WSMessage) {
@@ -51,6 +54,7 @@ export class StreamingAgent extends Agent<Env> {
 ## Cron/Scheduled
 
 ```ts
+import {Agent} from "agents";
 export class TaskAgent extends Agent<Env> {
   onStart() { this.schedule("0 0 * * *", "dailyCleanup", {}); this.schedule("0 * * * *", "syncData", {}); }
   async dailyCleanup() { this.sql`DELETE FROM logs WHERE created_at < ${Date.now() - 86400000}`; }
@@ -61,6 +65,7 @@ export class TaskAgent extends Agent<Env> {
 ## Email+AI
 
 ```ts
+import {Agent, AgentEmail, Connection} from "agents";
 export class EmailAgent extends Agent<Env> {
   async onEmail(email: AgentEmail) {
     const [text, from, subject] = [await email.text(), email.from, email.headers.get("subject")];
@@ -75,6 +80,7 @@ export class EmailAgent extends Agent<Env> {
 ## Game
 
 ```ts
+import {Agent, Connection, ConnectionContext, WSMessage} from "agents";
 export class GameAgent extends Agent<Env, GameState> {
   initialState = {players: [], score: 0, round: 1};
   async onConnect(conn: Connection, ctx: ConnectionContext) {
