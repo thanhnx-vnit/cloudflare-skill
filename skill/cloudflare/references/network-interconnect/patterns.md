@@ -1,6 +1,6 @@
 # CNI Patterns
 
-See [README.md](README.md) for overview.
+See [README.md](./README.md) for overview.
 
 ## High Availability
 

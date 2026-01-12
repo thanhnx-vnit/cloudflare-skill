@@ -1,6 +1,6 @@
 # CNI Configuration
 
-See [README.md](README.md) for overview.
+See [README.md](./README.md) for overview.
 
 ## Workflow (2-4 weeks)
 

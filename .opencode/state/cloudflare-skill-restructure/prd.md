@@ -115,10 +115,10 @@ references:
 
 ```markdown
 ## In This Reference
-- [Configuration](configuration.md) — wrangler.jsonc setup
-- [API Reference](api.md) — runtime APIs, types
-- [Patterns](patterns.md) — common examples
-- [Gotchas](gotchas.md) — pitfalls, limits
+- [Configuration](./configuration.md) — wrangler.jsonc setup
+- [API Reference](./api.md) — runtime APIs, types
+- [Patterns](./patterns.md) — common examples
+- [Gotchas](./gotchas.md) — pitfalls, limits
 
 ## See Also
 - [Related Product](../related-product/) — when to use instead

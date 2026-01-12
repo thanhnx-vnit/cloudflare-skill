@@ -166,7 +166,7 @@ meeting.chat.on('chatUpdate', (data) => console.log('[chat] chatUpdate:', data))
 - **Memory**: Clean up event listeners on unmount, call `meeting.leave()` when done, don't store large participant arrays
 
 ## In This Reference
-- [README.md](README.md) - Overview, core concepts, quick start
-- [configuration.md](configuration.md) - SDK config, presets, wrangler setup
-- [api.md](api.md) - Client SDK APIs, REST endpoints
-- [patterns.md](patterns.md) - Common patterns, React hooks, backend integration
+- [README.md](./README.md) - Overview, core concepts, quick start
+- [configuration.md](./configuration.md) - SDK config, presets, wrangler setup
+- [api.md](./api.md) - Client SDK APIs, REST endpoints
+- [patterns.md](./patterns.md) - Common patterns, React hooks, backend integration

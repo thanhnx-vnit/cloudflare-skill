@@ -1,6 +1,6 @@
 # CNI API Reference
 
-See [README.md](README.md) for overview.
+See [README.md](./README.md) for overview.
 
 ## Base
 
