@@ -174,3 +174,13 @@ Started: 2026-01-12
   - Task spec takes precedence over existing cross-references
   - D1 + Hyperdrive pattern: D1 for serverless SQLite, Hyperdrive for pooled external DB connections
   - Simplified See Also section improves focus on core integrations
+
+## Task - crossref-5
+- Verified durable-objects/README.md has complete cross-references
+- In This Reference section: links to configuration, api, patterns, gotchas ✓
+- See Also section: links to workers, do-storage ✓
+- File verified: skill/cloudflare/references/durable-objects/README.md (90 lines, under <100 limit)
+- **Learnings:**
+  - Cross-references already implemented in split-7 task
+  - DO + workers integration: Workers access DOs via bindings/stubs
+  - DO + do-storage pattern: do-storage deep-dives into SQLite, KV, and sync APIs
