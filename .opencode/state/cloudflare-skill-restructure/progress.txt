@@ -29,3 +29,18 @@ Started: 2026-01-12
   - Consolidate related subsections into single code blocks with comments
   - Aggressive line reduction: combine similar examples, remove redundancy
   - Cross-references at bottom keep navigation consistent
+
+## Task - split-2
+- Split 1439-line cache-reserve/SKILL.md into 5 focused files
+- Files created:
+  - README.md (93 lines) - Overview, eligibility, quick start
+  - configuration.md (164 lines) - Dashboard, API, Cache Rules, wrangler
+  - api.md (176 lines) - Workers integration, purging, monitoring, pricing
+  - patterns.md (180 lines) - Best practices, architecture, cost optimization
+  - gotchas.md (203 lines) - Issues, solutions, troubleshooting, limits
+- Deleted: SKILL.md (1439 lines)
+- All files have cross-reference sections
+- **Learnings:**
+  - Inline compression: combine similar patterns, use compact comments
+  - Remove verbose examples when simpler versions convey same info
+  - Consolidate header pattern examples into single line

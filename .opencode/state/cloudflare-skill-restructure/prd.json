@@ -28,7 +28,7 @@
         "gotchas.md exists (<100 lines)",
         "Original SKILL.md deleted"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "split-3",
