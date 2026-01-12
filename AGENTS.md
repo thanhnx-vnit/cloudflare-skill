@@ -11,10 +11,6 @@ Documentation/skill repository for Cloudflare platform—structured reference do
 
 ```
 ./
-├── .jj/                          # VCS (jujutsu, NOT git)
-├── .opencode/                    # OpenCode plugin config
-├── docs/
-│   └── products.md               # Platform overview (101 products)
 └── skill/
     └── cloudflare/
         ├── SKILL.md              # Main skill manifest + decision trees
@@ -34,7 +30,6 @@ Documentation/skill repository for Cloudflare platform—structured reference do
 |------|----------|-------|
 | Find a product | `skill/cloudflare/SKILL.md` | Decision trees + full index |
 | Product reference | `skill/cloudflare/references/<product>/` | 5-file structure |
-| Common patterns | `skill/cloudflare/patterns.md` | Multi-product architectures |
 | Platform overview | `docs/products.md` | All 101 products listed |
 
 ## CONVENTIONS
