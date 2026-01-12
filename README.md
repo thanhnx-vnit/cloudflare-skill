@@ -4,35 +4,42 @@ Comprehensive Cloudflare platform reference docs for AI/LLM consumption. Covers 
 
 ## Install
 
-Clone into your project's `.opencode/skill/` directory:
+Local installation (current project only):
 
 ```bash
-git clone https://github.com/YOUR_ORG/cloudflare-skill.git /tmp/cf-skill && \
-  cp -r /tmp/cf-skill/skill/cloudflare .opencode/skill/cloudflare && \
-  rm -rf /tmp/cf-skill
+curl -fsSL https://raw.githubusercontent.com/dmmulroy/cloudflare-skill/main/install.sh | bash
 ```
 
-Or for global installation (available in all projects):
+Global installation (available in all projects):
 
 ```bash
-git clone https://github.com/YOUR_ORG/cloudflare-skill.git /tmp/cf-skill && \
-  cp -r /tmp/cf-skill/skill/cloudflare ~/.config/opencode/skill/cloudflare && \
-  rm -rf /tmp/cf-skill
+curl -fsSL https://raw.githubusercontent.com/dmmulroy/cloudflare-skill/main/install.sh | bash -s -- --global
 ```
-
-> **Note:** Replace `YOUR_ORG` with the actual GitHub org/user.
 
 ## Usage
 
-Once installed, the skill appears in OpenCode's `<available_skills>` list. The agent loads it automatically when working on Cloudflare tasks, or you can request it explicitly:
+Once installed, the skill appears in OpenCode's `<available_skills>` list. The agent loads it automatically when working on Cloudflare tasks.
+
+Use the `/cloudflare` command to load the skill and get contextual guidance:
 
 ```
-Load the cloudflare skill and help me set up a D1 database
+/cloudflare set up a D1 database with migrations
+```
+
+### Updating
+
+To update to the latest version:
+
+```
+/cloudflare --update-skill
 ```
 
 ## Structure
 
+The installer adds both a skill and a command:
+
 ```
+# Skill (reference docs)
 skill/cloudflare/
 ├── SKILL.md              # Main manifest + decision trees
 ├── patterns.md           # Multi-product architecture patterns
@@ -43,6 +50,9 @@ skill/cloudflare/
         ├── configuration.md  # wrangler.toml + bindings
         ├── patterns.md       # Usage patterns
         └── gotchas.md        # Pitfalls, limitations
+
+# Command (slash command)
+command/cloudflare.md     # /cloudflare entrypoint
 ```
 
 ### Decision Trees

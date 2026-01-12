@@ -23,7 +23,7 @@ This skill focuses **exclusively on Cloudflare Workers AI** - the serverless AI 
 
 ### Installation
 
-1. Place `SKILL.md` in your OpenCode skills directory
+1. Place `README.md` in your OpenCode skills directory
 2. Load the skill when working on Workers AI projects
 
 ### When to Load This Skill
