@@ -18,13 +18,12 @@
 4. **Performance:** Local performance ≠ edge performance
 5. **Caching:** May differ slightly from production
 
-## Common Issues
+## Common Errors
 
-### Module Resolution Errors
+### "Cannot find module"
 
-**Problem:** `Cannot find module`
-
-**Fix:**
+**Cause:** Module path incorrect or modulesRules not configured
+**Solution:**
 ```js
 // Use absolute paths or modulesRules
 new Miniflare({
@@ -36,11 +35,10 @@ new Miniflare({
 });
 ```
 
-### Persistence Not Working
+### "Data not persisting between runs"
 
-**Problem:** Data not persisting between runs
-
-**Fix:**
+**Cause:** Persist paths are files instead of directories
+**Solution:**
 ```js
 // Ensure persist paths are directories, not files
 new Miniflare({
@@ -50,11 +48,10 @@ new Miniflare({
 });
 ```
 
-### TypeScript Workers
+### "Cannot directly run TypeScript"
 
-**Problem:** Cannot directly run TypeScript
-
-**Fix:**
+**Cause:** Miniflare doesn't transpile TypeScript
+**Solution:**
 ```js
 // Build before running
 import { spawnSync } from "node:child_process";
@@ -67,11 +64,10 @@ before(() => {
 new Miniflare({ scriptPath: "dist/worker.js" });
 ```
 
-### Request.cf Undefined
+### "`request.cf` is undefined"
 
-**Problem:** `request.cf` is undefined in worker
-
-**Fix:**
+**Cause:** CF object not configured
+**Solution:**
 ```js
 new Miniflare({
   cf: true, // Fetch from Cloudflare
@@ -80,11 +76,10 @@ new Miniflare({
 });
 ```
 
-### Port Already in Use
+### "EADDRINUSE error"
 
-**Problem:** `EADDRINUSE` error
-
-**Fix:**
+**Cause:** Port already in use by another process
+**Solution:**
 ```js
 // Don't specify port for testing - use dispatchFetch
 new Miniflare({
@@ -95,11 +90,10 @@ new Miniflare({
 const res = await mf.dispatchFetch("http://localhost/");
 ```
 
-### Durable Object Not Found
+### "Durable Object not defined"
 
-**Problem:** `ReferenceError: Counter is not defined`
-
-**Fix:**
+**Cause:** DO class not exported or name mismatch
+**Solution:**
 ```js
 // Ensure DO class is exported
 new Miniflare({
@@ -169,6 +163,14 @@ Major changes:
 - Better workerd integration
 - Changed persistence options
 - See [official migration guide](https://developers.cloudflare.com/workers/testing/vitest-integration/migration-guides/migrate-from-miniflare-2/)
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Local storage | Filesystem based | Performance varies |
+| Concurrent Workers | System dependent | Memory limited |
+| Request.cf data | Cached or mocked | Not real edge data |
 
 ## When to Use
 

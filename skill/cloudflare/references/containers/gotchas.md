@@ -18,4 +18,30 @@
    - Don't log sensitive environment variables
 
 5. **Design for container restarts:**
-   - Containers can stop after
+   - Containers can stop after `sleepAfter`
+
+## Common Errors
+
+### "Container not found"
+
+**Cause:** Container ID invalid, container deleted, or binding incorrect
+**Solution:** Verify container ID correct, check binding configuration, ensure container exists
+
+### "Container start failed"
+
+**Cause:** Image invalid, resource limits exceeded, or initialization error
+**Solution:** Validate container image, check resource limits, review initialization logs
+
+### "Container timeout"
+
+**Cause:** Container took too long to start or respond
+**Solution:** Optimize container startup, increase timeout if needed, check container health
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Max containers per Worker | Varies by plan | Check dashboard |
+| Container sleep timeout | Configurable | Via `sleepAfter` |
+| Container memory | Plan dependent | Monitor usage |
+| Container CPU | Shared | Performance varies |

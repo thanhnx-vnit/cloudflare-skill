@@ -25,4 +25,32 @@ export const cfClient = new Cloudflare({
 });
 
 // Wrap common operations
-export async function
+export async function getZoneDetails(zoneId: string) {
+  return await cfClient.zones.get(zoneId);
+}
+```
+
+## Common Errors
+
+### "Authentication failed"
+
+**Cause:** Invalid API token, expired token, or insufficient permissions
+**Solution:** Verify API token valid, check expiration, ensure token has required permissions
+
+### "Rate limit exceeded"
+
+**Cause:** Too many requests in short period
+**Solution:** Implement exponential backoff, reduce request frequency, use caching
+
+### "Resource not found"
+
+**Cause:** Incorrect resource ID, resource deleted, or wrong account/zone
+**Solution:** Verify resource ID correct, check resource exists, confirm correct account context
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| API rate limits | Varies by endpoint | Check response headers |
+| Token permissions | Scoped | Create with minimal access |
+| Parallel requests | Recommended < 10 | Avoid overwhelming API |

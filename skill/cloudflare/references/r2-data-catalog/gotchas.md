@@ -17,4 +17,30 @@
 5. **Monitor query performance** and adjust compaction settings
 
 ### Data Modeling
-1. **Use namespaces** to organiz
+1. **Use namespaces** to organize tables
+
+## Common Errors
+
+### "Token invalid"
+
+**Cause:** Token expired, revoked, or insufficient permissions
+**Solution:** Create new token with correct permissions (Admin Read & Write), verify token not expired
+
+### "Compaction failed"
+
+**Cause:** Invalid target file size, insufficient resources, or table locked
+**Solution:** Verify target file size appropriate, check resource availability, ensure table not locked
+
+### "Query timeout"
+
+**Cause:** Query too complex, large dataset, or missing indexes
+**Solution:** Optimize query, add partitioning, break into smaller queries
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Max table size | Varies | Monitor compaction |
+| Token quota | Per account | Admin tokens |
+| Snapshot retention | Configurable | Set per table |
+| Target file size | 128 MB recommended | Tune per workload |

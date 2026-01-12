@@ -240,7 +240,7 @@
         "Errors have Cause and Solution subsections",
         "Each gotchas.md has Limits table"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "context": {

@@ -32,4 +32,29 @@ export default {
     const response = await fetch('https://api.example.com');
     
     // Clone before caching
-    ctx.waitUntil(cach
+    ctx.waitUntil(caches.default.put(request, response.clone()));
+    
+    return response;
+  },
+};
+```
+
+## Common Errors
+
+### "Response body already read"
+
+**Cause:** Attempting to read response body twice
+**Solution:** Clone response before reading: `response.clone()`
+
+### "Worker exceeded CPU time"
+
+**Cause:** Code execution took too long
+**Solution:** Optimize code, use `ctx.waitUntil()` for background tasks
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| CPU time | 10ms (Free) / 50ms (Paid) | Per request |
+| Script size | 1 MB | Compressed |
+| Subrequests | 1000 | Per request |

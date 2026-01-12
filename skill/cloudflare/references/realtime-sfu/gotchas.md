@@ -1,75 +1,40 @@
 # Gotchas & Troubleshooting
 
-## Common Issues
+## Common Errors
 
-**Slow connect (~1.8s):** First STUN delayed (consensus forming), normal, subsequent faster
-**USE-CANDIDATE delay (Chrome):** CF detects DTLS ClientHello early to compensate
+### "Slow initial connect (~1.8s)"
 
-**No media flow checklist:**
-1. SDP exchange done? 2. `pc.connectionState === 'connected'`? 3. Tracks added before offer? 4. Browser perms? 5. `chrome://webrtc-internals`
+**Cause:** First STUN delayed during consensus forming (normal behavior)
+**Solution:** Subsequent connections are faster. CF detects DTLS ClientHello early to compensate.
 
-**Track not RX checklist:**
-1. Published OK? 2. Track ID shared? 3. Session IDs match? 4. `pc.ontrack` before answer? 5. Renegotiation done?
+### "No media flow"
 
-## Debug
+**Cause:** SDP exchange incomplete, connection not established, tracks not added before offer, browser permissions missing
+**Solution:** 
+1. Verify SDP exchange complete
+2. Check `pc.connectionState === 'connected'`
+3. Ensure tracks added before creating offer
+4. Confirm browser permissions granted
+5. Use `chrome://webrtc-internals` for debugging
 
-`chrome://webrtc-internals`: ICE pairs, DTLS, media stats, bandwidth
+### "Track not receiving"
 
-Logging:
-```ts
-pc.addEventListener('icecandidateerror', (e) => console.error('ICE err:', e));
-pc.addEventListener('connectionstatechange', () => console.log('Conn:', pc.connectionState));
-pc.addEventListener('iceconnectionstatechange', () => console.log('ICE:', pc.iceConnectionState));
-```
+**Cause:** Track not published, track ID not shared, session IDs mismatch, `pc.ontrack` not set, renegotiation needed
+**Solution:** 
+1. Verify track published successfully
+2. Confirm track ID shared between peers
+3. Check session IDs match
+4. Set `pc.ontrack` handler before answer
+5. Trigger renegotiation if needed
 
-Quality:
-```ts
-setInterval(async () => {
-  const stats = await pc.getStats();
-  stats.forEach(r => {
-    if (r.type === 'inbound-rtp' && r.kind === 'video')
-      console.log('Loss:', r.packetsLost, 'Jitter:', r.jitter, 'Bytes:', r.bytesReceived);
-  });
-}, 1000);
-```
+## Limits
 
-## Security
-
-❌ Never expose App Secret client-side (use backend env vars, Wrangler secrets)
-Track IDs = capabilities, authz required:
-```ts
-app.post('/api/sessions/:sid/tracks', async (req, res) => {
-  for (const t of req.body.tracks)
-    if (!await canAccessTrack(req.user.id, t.trackName)) return res.status(403).json({error: 'Unauth'});
-  // CF API call
-});
-```
-Validate session ownership, timeouts, cleanup abandoned
-
-## Pricing & Limits
-
-Free: 1TB/mo egress. Paid: $0.05/GB. Inbound free. TURN free w/SFU. No participant/track limits (client bandwidth/CPU bound). Optimize: bitrates, simulcast, adaptive, cleanup
-
-## vs Traditional SFUs
-
-| Aspect | Traditional | Cloudflare |
-|--------|------------|------------|
-| Deploy | Single region | 310+ DCs |
-| Route | Manual | Anycast |
-| SDK | Often required | Pure WebRTC |
-| Arch | Rooms | Sessions/tracks |
-| Scale | Vertical/horiz | Auto global |
-| TURN | Separate | Integrated |
-| State | Centralized | Distributed |
-
-## Quick Ref
-
-```bash
-POST /v1/apps/{appId}/sessions/new  # Create
-POST .../sessions/{sid}/tracks/new  # Pub: {sessionDescription, tracks: [{location:'local',trackName}]}
-POST .../sessions/{sid}/tracks/new  # Sub: {tracks:[{location:'remote',trackName,sessionId}]}
-PUT .../sessions/{sid}/renegotiate  # Renegotiate
-PUT .../sessions/{sid}/tracks/close # Close
-```
-
-CF SFU: unopinionated, full WebRTC control, max flexibility, needs fundamentals
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Egress (Free) | 1TB/month | Per account |
+| Egress (Paid) | $0.05/GB | After free tier |
+| Inbound traffic | Free | All plans |
+| TURN service | Free | Included with SFU |
+| Participants | No hard limit | Client bandwidth/CPU bound |
+| Tracks per session | No hard limit | Client resources limited |
+| WebRTC ports | UDP 1024-65535 | Required for media |

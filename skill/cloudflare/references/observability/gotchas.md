@@ -1,15 +1,9 @@
-## Troubleshooting
+## Common Errors
 
-### Logs not appearing
+### "Logs not appearing"
 
-**Check**:
-1. `observability.enabled = true` in wrangler config
-2. Worker has been redeployed after config change
-3. Worker is receiving traffic
-4. Sampling rate is not too low (check `head_sampling_rate`)
-5. Log size under 256 KB limit
-
-**Solution**:
+**Cause:** Observability disabled, Worker not redeployed, no traffic, low sampling rate, or log size exceeds 256 KB
+**Solution:** 
 ```bash
 # Verify config
 cat wrangler.jsonc | jq '.observability'
@@ -20,17 +14,30 @@ wrangler deployments list <WORKER_NAME>
 # Test with curl
 curl https://your-worker.workers.dev
 ```
+Ensure `observability.enabled = true`, redeploy Worker, check `head_sampling_rate`, verify traffic
 
-### Traces not being captured
+### "Traces not being captured"
 
-**Check**:
-1. `observability.traces.enabled = true`
-2. `head_sampling_rate` is appropriate (1.0 for testing)
-3. Worker deployed after traces enabled
-4. Check destination status in dashboard
-
-**Solution**:
+**Cause:** Traces not enabled, incorrect sampling rate, Worker not redeployed, or destination unavailable
+**Solution:**
 ```jsonc
 // Temporarily set to 100% sampling for debugging
 {
-  "observability": 
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1.0,
+    "traces": {
+      "enabled": true
+    }
+  }
+}
+```
+Ensure `observability.traces.enabled = true`, set `head_sampling_rate` to 1.0 for testing, redeploy, check destination status
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Max log size | 256 KB | Logs exceeding this are truncated |
+| Default sampling rate | 0.01 (1%) | Increase for debugging |
+| Max destinations | Varies by plan | Check dashboard |

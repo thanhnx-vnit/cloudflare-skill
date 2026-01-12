@@ -1,189 +1,40 @@
 # Cache Reserve Gotchas
 
-## Common Issues and Solutions
+## Common Errors
 
-### Issue: Assets Not Being Cached in Cache Reserve
+### "Assets Not Being Cached in Cache Reserve"
 
-**Diagnostics:**
+**Cause:** Asset is not cacheable, TTL < 10 hours, Content-Length header missing, or blocking headers present (Set-Cookie, Vary: *)  
+**Solution:** Ensure minimum TTL of 10+ hours (`Cache-Control: public, max-age=36000`), add Content-Length header, remove Set-Cookie header, and set `Vary: Accept-Encoding` (not *)
 
-```typescript
-const debugEligibility = {
-  checks: [
-    'Verify asset is cacheable (cf-cache-status header)',
-    'Check TTL >= 10 hours',
-    'Confirm Content-Length header present',
-    'Review Cache Rules configuration',
-    'Check for Set-Cookie or Vary: * headers'
-  ],
-  
-  tools: [
-    'curl -I https://example.com/asset.jpg',
-    'Check cf-cache-status header',
-    'Review Cloudflare Trace output',
-    'Check Logpush CacheReserveUsed field'
-  ]
-};
-```
+### "High Class A Operations Costs"
 
-**Solutions:**
+**Cause:** Frequent cache misses, short TTLs, or frequent revalidation  
+**Solution:** Increase TTL for stable content (24+ hours), enable Tiered Cache to reduce direct Cache Reserve misses, or use stale-while-revalidate
 
-```typescript
-// 1. Ensure minimum TTL (10+ hours)
-response.headers.set('Cache-Control', 'public, max-age=36000');
+### "Purge Not Working as Expected"
 
-// Or via Cache Rule:
-const rule = {
-  action_parameters: {
-    edge_ttl: { mode: 'override_origin', default: 36000 }
-  }
-};
+**Cause:** Purge by tag only triggers revalidation but doesn't remove from Cache Reserve storage  
+**Solution:** Use purge by URL for immediate removal, or disable Cache Reserve then clear all data for complete removal
 
-// 2. Add Content-Length
-response.headers.set('Content-Length', bodySize.toString());
+### "Cache Reserve must be OFF before clearing data"
 
-// 3. Remove blocking headers
-response.headers.delete('Set-Cookie');
-response.headers.set('Vary', 'Accept-Encoding'); // Not *
-```
-
-### Issue: High Class A Operations Costs
-
-**Cause**: Frequent cache misses, short TTLs, or frequent revalidation
-
-**Solutions:**
-
-```typescript
-// 1. Increase TTL for stable content
-const optimizedTTL = {
-  before: 3600,  // 1 hour (not eligible)
-  after: 86400   // 24 hours (eligible + fewer rewrites)
-};
-
-// 2. Enable Tiered Cache (reduces direct Cache Reserve misses)
-
-// 3. Use stale-while-revalidate (via fetch, not cache.put)
-response.headers.set(
-  'Cache-Control',
-  'public, max-age=86400, stale-while-revalidate=86400'
-);
-```
-
-### Issue: Purge Not Working as Expected
-
-**Understanding purge behavior:**
-
-```typescript
-const purgeBehavior = {
-  byURL: {
-    cacheReserve: 'Immediately removed',
-    edgeCache: 'Immediately removed',
-    cost: 'Free'
-  },
-  
-  byTag: {
-    cacheReserve: 'Revalidation triggered, NOT removed',
-    edgeCache: 'Immediately removed',
-    storage: 'Continues until TTL expires',
-    cost: 'Storage costs continue'
-  }
-};
-
-// Solution: Use purge by URL for immediate removal
-await purgeByURL(['https://example.com/asset.jpg']);
-
-// Or: Disable + clear for complete removal
-await disableCacheReserve(zoneId, token);
-await clearAllCacheReserve(zoneId, token);
-```
-
-### Issue: Cache Reserve Disabled But Can't Clear
-
-**Error**: "Cache Reserve must be OFF before clearing data"
-
-**Solution:**
-
-```typescript
-const clearProcess = async (zoneId: string, token: string) => {
-  // Step 1: Check current state
-  const status = await getCacheReserveStatus(zoneId, token);
-  
-  // Step 2: Disable if enabled
-  if (status.result.value !== 'off') {
-    await disableCacheReserve(zoneId, token);
-  }
-  
-  // Step 3: Wait briefly for propagation
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  
-  // Step 4: Clear data
-  const clearResult = await clearAllCacheReserve(zoneId, token);
-  
-  // Step 5: Monitor clear progress (can take up to 24 hours)
-  let clearStatus;
-  do {
-    await new Promise(resolve => setTimeout(resolve, 60000));
-    clearStatus = await getClearStatus(zoneId, token);
-  } while (clearStatus.result.state === 'In-progress');
-};
-```
-
-## Troubleshooting
-
-### Diagnostic Commands
-
-```bash
-# Check Cache Reserve status
-curl -X GET "https://api.cloudflare.com/client/v4/zones/$ZONE_ID/cache/cache_reserve" \
-  -H "Authorization: Bearer $API_TOKEN" | jq
-
-# Check asset cache status
-curl -I https://example.com/asset.jpg | grep -i cache
-```
-
-### Common Header Patterns
-
-```typescript
-// Successful: HIT + max-age >= 36000 + content-length present
-// Not eligible: TTL < 10hrs | missing content-length | has set-cookie | vary: *
-```
+**Cause:** Attempting to clear Cache Reserve data while it's still enabled  
+**Solution:** Disable Cache Reserve first, wait briefly for propagation (5s), then clear data (can take up to 24 hours)
 
 ## Limits
 
-### Minimum Requirements Checklist
-
-- [ ] Paid Cache Reserve plan active
-- [ ] Tiered Cache enabled (strongly recommended)
-- [ ] Assets cacheable per standard rules
-- [ ] TTL >= 10 hours (36000 seconds)
-- [ ] Content-Length header present
-- [ ] No Set-Cookie header (or using private directive)
-- [ ] No Vary: * header
-- [ ] Not an image transformation variant
-
-### Key Limits
-
-```typescript
-const limits = {
-  minTTL: 36000,              // 10 hours in seconds
-  retentionDefault: 2592000,  // 30 days in seconds
-  maxFileSize: Infinity,      // Same as R2 limits
-  purgeClearTime: 86400000,   // Up to 24 hours in milliseconds
-};
-```
-
-### API Endpoints
-
-```typescript
-const endpoints = {
-  status: 'GET /zones/:zone_id/cache/cache_reserve',
-  enable: 'PATCH /zones/:zone_id/cache/cache_reserve',
-  disable: 'PATCH /zones/:zone_id/cache/cache_reserve',
-  clear: 'POST /zones/:zone_id/cache/cache_reserve_clear',
-  clearStatus: 'GET /zones/:zone_id/cache/cache_reserve_clear',
-  purge: 'POST /zones/:zone_id/purge_cache',
-  cacheRules: 'PUT /zones/:zone_id/rulesets/phases/http_request_cache_settings/entrypoint'
-};
-```
+| Limit | Value | Notes |
+|-------|-------|-------|
+| Minimum TTL | 10 hours (36000 seconds) | Assets with shorter TTL not eligible |
+| Default retention | 30 days (2592000 seconds) | Configurable |
+| Maximum file size | Same as R2 limits | No practical limit |
+| Purge/clear time | Up to 24 hours | Complete propagation time |
+| Plan requirement | Paid Cache Reserve plan | Not available on free plans |
+| Content-Length header | Required | Must be present for eligibility |
+| Set-Cookie header | Blocks caching | Must not be present (or use private directive) |
+| Vary header | Cannot be * | Can use Vary: Accept-Encoding |
+| Image transformations | Variants not eligible | Original images only |
 
 ## Additional Resources
 

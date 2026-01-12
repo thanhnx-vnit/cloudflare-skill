@@ -128,19 +128,40 @@ npx wrangler pages deployment tail --project-name=my-project
 
 ## Common Errors
 
-**"Module not found"**: Check build output, ensure dependencies bundled
+### "Module not found"
 
-**"Binding not found"**: Verify wrangler.jsonc and regenerate types
+**Cause:** Dependencies not bundled or build output incorrect
+**Solution:** Check build output directory, ensure dependencies bundled correctly
 
-**"Request exceeded CPU limit"**: Optimize hot paths, use Workers for heavy compute
+### "Binding not found"
 
-**"Script too large"**: Tree-shake, dynamic imports, code-split
+**Cause:** Binding not configured or types out of sync
+**Solution:** Verify wrangler.jsonc configuration and regenerate types with `npx wrangler types`
 
-**"Too many subrequests"**: Max 50 subreqs per request, batch where possible
+### "Request exceeded CPU limit"
 
-**"KV key not found"**: Check namespaces match (production vs preview)
+**Cause:** Code execution too slow or heavy compute in request path
+**Solution:** Optimize hot paths, offload heavy compute to Workers with higher limits
 
-**"D1 error"**: Verify database_id, check migrations applied
+### "Script too large"
+
+**Cause:** Bundle size exceeds limit
+**Solution:** Tree-shake unused code, use dynamic imports, implement code-splitting
+
+### "Too many subrequests"
+
+**Cause:** Exceeded 50 subrequest limit per request
+**Solution:** Batch subrequests where possible, reduce number of fetch calls
+
+### "KV key not found"
+
+**Cause:** Key doesn't exist or wrong namespace (production vs preview mismatch)
+**Solution:** Check namespaces match environment, verify key exists
+
+### "D1 error"
+
+**Cause:** Database ID incorrect or migrations not applied
+**Solution:** Verify database_id in config, check migrations applied with `wrangler d1 migrations list`
 
 ## Limits Reference
 

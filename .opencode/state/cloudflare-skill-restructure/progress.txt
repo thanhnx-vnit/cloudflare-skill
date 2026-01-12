@@ -282,3 +282,21 @@ Started: 2026-01-12
   - smart-placement: optimize placement for backend latency (not user latency)
   - cache-reserve: persistent R2-backed cache storage
   - Compression: consolidated IaC tree from 3 lines to 1 line to stay under 200 limit
+
+## Task - polish-2
+- Standardized error handling across all 49 gotchas.md files
+- Files changed:
+  - All 49 references/*/gotchas.md files modified
+- Changes:
+  - All files now have "## Common Errors" section (not "Common Issues" or other variants)
+  - All errors formatted with ### "Error name" headers
+  - All errors have **Cause:** and **Solution:** subsections (not inline format)
+  - All files have "## Limits" section formatted as markdown tables
+  - 34 files modified in first pass, 15 files modified in second pass
+- **Learnings:**
+  - Consistent error format: ### "Error name" → **Cause:** → **Solution:**
+  - Limits must be tables, not prose or bullet lists
+  - Some files had "Common Issues" → renamed to "Common Errors"
+  - Some files had inline errors (e.g., "Error: X → Solution: Y") → converted to subsection format
+  - Pattern: Extract troubleshooting content and reorganize into standardized sections
+  - Two-pass approach: batch processing agent + verification/cleanup ensures completeness

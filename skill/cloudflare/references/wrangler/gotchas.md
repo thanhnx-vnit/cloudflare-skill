@@ -1,29 +1,34 @@
 # Wrangler Common Issues
 
-Pitfalls, limits, and troubleshooting.
+## Common Errors
 
-## Common Gotchas
+### "Binding ID vs name mismatch"
 
-### Binding IDs vs Names
-- Bindings use `binding` (code name) and `id`/`database_id`/`bucket_name` (resource ID)
-- Preview bindings need separate IDs: `preview_id`, `preview_database_id`
+**Cause:** Confusion between binding name (code) and resource ID
+**Solution:** Bindings use `binding` (code name) and `id`/`database_id`/`bucket_name` (resource ID). Preview bindings need separate IDs: `preview_id`, `preview_database_id`
 
-### Environment Inheritance
-- Non-inheritable keys (bindings, vars) must be redefined per environment
-- Inheritable keys (routes, compatibility_date) can be overridden
+### "Environment not inheriting config"
 
-### Local vs Remote Dev
-- `wrangler dev` (default): Local simulation, fast, limited accuracy
-- `wrangler dev --remote`: Remote execution, slower, production-accurate
+**Cause:** Non-inheritable keys not redefined per environment
+**Solution:** Non-inheritable keys (bindings, vars) must be redefined per environment. Inheritable keys (routes, compatibility_date) can be overridden
 
-### Compatibility Dates
-Always set `compatibility_date` to avoid unexpected runtime changes:
+### "Local dev behavior differs from production"
+
+**Cause:** Using local simulation instead of remote execution
+**Solution:** `wrangler dev` (default): Local simulation, fast, limited accuracy. `wrangler dev --remote`: Remote execution, slower, production-accurate
+
+### "Unexpected runtime changes"
+
+**Cause:** Missing compatibility_date
+**Solution:** Always set `compatibility_date`:
 ```jsonc
 { "compatibility_date": "2025-01-01" }
 ```
 
-### Durable Objects Need script_name
-With `getPlatformProxy`, always specify `script_name`:
+### "Durable Object binding not working"
+
+**Cause:** Missing script_name in getPlatformProxy
+**Solution:** Always specify `script_name`:
 ```jsonc
 {
   "durable_objects": {
@@ -34,14 +39,26 @@ With `getPlatformProxy`, always specify `script_name`:
 }
 ```
 
-### Secrets in Local Dev
-Secrets set with `wrangler secret put` only work in deployed Workers. For local dev, use `.dev.vars`.
+### "Secrets not available in local dev"
 
-### Node.js Compatibility
-Some bindings (Hyperdrive with `pg`) require Node.js compatibility:
+**Cause:** Secrets set with `wrangler secret put` only work in deployed Workers
+**Solution:** For local dev, use `.dev.vars`
+
+### "Node.js compatibility error"
+
+**Cause:** Missing Node.js compatibility flag
+**Solution:** Some bindings (Hyperdrive with `pg`) require:
 ```jsonc
 { "compatibility_flags": ["nodejs_compat_v2"] }
 ```
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Bindings per Worker | 64 | Check wrangler.jsonc |
+| Environments | Unlimited | Configure per env |
+| Config file size | Reasonable | Keep under 1MB |
 
 ## Troubleshooting
 

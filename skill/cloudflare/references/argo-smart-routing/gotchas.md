@@ -11,6 +11,26 @@
 9. **Implement retry logic** for API calls in production systems
 10. **Document zone-specific settings** for team visibility
 
+## Common Errors
+
+### "Argo unavailable"
+
+**Cause:** Zone not eligible or billing not set up
+**Solution:** Check zone plan, verify billing configured, ensure zone meets eligibility requirements
+
+### "Cannot enable/disable"
+
+**Cause:** Insufficient permissions or zone restrictions
+**Solution:** Verify API token has edit permissions, check zone editability status
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Min requests for analytics | 500 in 48h | For detailed metrics |
+| Zones supported | Enterprise+ | Check plan |
+| Billing requirement | Must be configured | Before enabling |
+
 ## Additional Resources
 
-- [Official Argo Smart Routing Docs](https://devel
+- [Official Argo Smart Routing Docs](https://developers.cloudflare.com/argo-smart-routing/)

@@ -1,11 +1,11 @@
 # Gotchas & Best Practices
 
-## Common Issues
+## Common Errors
 
-### Container Not Ready
-**Error**: `CONTAINER_NOT_READY`  
-**Cause**: Container still provisioning (first request or after sleep)  
-**Fix**: Retry after 2-3s
+### "CONTAINER_NOT_READY"
+
+**Cause:** Container still provisioning (first request or after sleep)
+**Solution:** Retry after 2-3s
 
 ```typescript
 async function execWithRetry(sandbox, cmd) {
@@ -23,28 +23,32 @@ async function execWithRetry(sandbox, cmd) {
 }
 ```
 
-### Port Exposure Fails in Dev
-**Error**: "Connection refused: container port not found"  
-**Cause**: Missing `EXPOSE` directive in Dockerfile  
-**Fix**: Add `EXPOSE <port>` to Dockerfile (only needed for `wrangler dev`, production auto-exposes)
+### "Connection refused: container port not found"
 
-### Preview URLs Not Working
-**Checklist**:
+**Cause:** Missing `EXPOSE` directive in Dockerfile
+**Solution:** Add `EXPOSE <port>` to Dockerfile (only needed for `wrangler dev`, production auto-exposes)
+
+### "Preview URLs not working"
+
+**Cause:** Custom domain not configured, wildcard DNS missing, `normalizeId` not set, or `proxyToSandbox()` not called
+**Solution:** Check:
 1. Custom domain configured? (not `.workers.dev`)
 2. Wildcard DNS set up? (`*.domain.com → worker.domain.com`)
 3. `normalizeId: true` in getSandbox?
 4. `proxyToSandbox()` called first in fetch?
 
-### Slow First Request
-**Cause**: Cold start (container provisioning)  
-**Solutions**:
+### "Slow first request"
+
+**Cause:** Cold start (container provisioning)
+**Solution:**
 - Use `sleepAfter` instead of creating new sandboxes
 - Pre-warm with cron triggers
 - Set `keepAlive: true` for critical sandboxes
 
-### File Not Persisting
-**Cause**: Files in `/tmp` or other ephemeral paths  
-**Fix**: Use `/workspace` for persistent files
+### "File not persisting"
+
+**Cause:** Files in `/tmp` or other ephemeral paths
+**Solution:** Use `/workspace` for persistent files
 
 ## Performance Optimization
 

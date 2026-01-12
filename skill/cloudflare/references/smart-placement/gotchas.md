@@ -1,20 +1,20 @@
 # Smart Placement Gotchas
 
-## "INSUFFICIENT_INVOCATIONS" Status
+## Common Errors
 
-**Problem:** Not enough traffic for Smart Placement to analyze.
+### "INSUFFICIENT_INVOCATIONS"
 
-**Solutions:**
+**Cause:** Not enough traffic for Smart Placement to analyze
+**Solution:**
 - Ensure Worker receives consistent global traffic
 - Wait longer (analysis takes up to 15 minutes)
 - Send test traffic from multiple global locations
 - Check Worker has fetch event handler
 
-## Smart Placement Making Things Slower
+### "UNSUPPORTED_APPLICATION"
 
-**Problem:** `placement_status: "UNSUPPORTED_APPLICATION"`
-
-**Likely Causes:**
+**Cause:** Worker doesn't benefit from Smart Placement - no backend calls, cached calls, or poor backend distribution
+**Solution:**
 - Worker doesn't make backend calls (runs faster at edge)
 - Backend calls are cached (network latency to user more important)
 - Backend service has poor global distribution
@@ -24,21 +24,19 @@
 - Review whether Worker actually benefits from Smart Placement
 - Consider caching strategy to reduce backend calls
 
-## No Request Duration Metrics
+### "No request duration metrics"
 
-**Problem:** Request duration chart not showing in dashboard.
-
-**Solutions:**
+**Cause:** Smart Placement not enabled, insufficient time passed, insufficient traffic, or analysis incomplete
+**Solution:**
 - Ensure Smart Placement enabled in config
 - Wait 15+ minutes after deployment
 - Verify Worker has sufficient traffic
 - Check `placement_status` is `SUCCESS`
 
-## cf-placement Header Missing
+### "cf-placement header missing"
 
-**Problem:** Header not present in responses.
-
-**Possible Causes:**
+**Cause:** Smart Placement not enabled, beta feature removed, or Worker not analyzed yet
+**Solution:**
 - Smart Placement not enabled
 - Beta feature removed (check latest docs)
 - Worker hasn't been analyzed yet
@@ -76,6 +74,15 @@
 - **Wrangler 2.20.0+** required
 - **Consistent multi-region traffic** needed for analysis
 - **Only affects fetch handlers** - RPC methods and named entrypoints not affected
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Analysis time | Up to 15 minutes | After enabling |
+| Baseline traffic | 1% | Routed without optimization |
+| Min Wrangler version | 2.20.0+ | Required |
+| Traffic requirement | Multi-region | Consistent needed |
 
 ## When NOT to Use
 

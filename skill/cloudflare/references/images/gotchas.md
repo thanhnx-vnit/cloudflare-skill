@@ -20,4 +20,25 @@
 
 ### 4. Responsive Images
 - Use `srcset` with multiple widths (400w, 800w, 1200w)
-- Set appropriate 
+- Set appropriate sizes
+
+## Common Errors
+
+### "Image transformation failed"
+
+**Cause:** Invalid parameters, unsupported format, or image too large
+**Solution:** Verify transformation parameters valid, check format supported, ensure image within size limits
+
+### "Rate limit exceeded"
+
+**Cause:** Too many transformation requests
+**Solution:** Implement caching, use CDN, reduce transformation frequency
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Max image size | 100MB | Input image |
+| Max dimensions | 12000×12000 | Width × height |
+| Transformations per request | Multiple | Can chain |
+| Formats supported | AVIF, WebP, JPEG, PNG, GIF | Output formats |

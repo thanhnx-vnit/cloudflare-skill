@@ -1,32 +1,29 @@
 # Gotchas & Debugging
 
-## Common Issues
+## Common Errors
 
-### Functions Not Invoking
+### "Functions not invoking"
 
-All requests serve static, functions never run.
-
-**Fix:**
+**Cause:** Functions directory in wrong location, files have wrong extension, or routes excluding paths
+**Solution:**
 - `/functions` in correct location (project root)
 - Check `pages_build_output_dir` in wrangler.json
 - Files have `.js` or `.ts` extension
 - `_routes.json` not excluding paths
 
-### Binding Not Available
+### "Binding not available"
 
-`context.env.MY_BINDING is undefined`
-
-**Fix:**
+**Cause:** Binding not configured, name mismatch, or not redeployed after changes
+**Solution:**
 - Binding in wrangler.json or dashboard
 - Name matches exactly (case-sensitive)
 - Local dev: pass flags OR configure wrangler.json
 - Redeploy after changes
 
-### TypeScript Errors
+### "TypeScript type errors for context.env"
 
-Type errors for `context.env`
-
-**Fix:**
+**Cause:** Environment types not defined
+**Solution:**
 ```typescript
 interface Env { MY_BINDING: KVNamespace; }
 
@@ -35,21 +32,19 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 };
 ```
 
-### Middleware Not Running
+### "Middleware not running"
 
-`_middleware.js` not executing
-
-**Fix:**
+**Cause:** File name incorrect, wrong directory, export missing, or not calling context.next()
+**Solution:**
 - Named exactly `_middleware.js`
 - In correct directory for route scope
 - `onRequest` or method handler exported
 - Use `context.next()` to pass control
 
-### Environment Variables Missing
+### "Environment variables missing"
 
-`context.env.VAR_NAME is undefined`
-
-**Fix:**
+**Cause:** Variables not configured in wrangler.json or secrets not set
+**Solution:**
 - `vars` in wrangler.json
 - Secrets: `.dev.vars` locally, dashboard/wrangler.json for prod
 - Redeploy after changes

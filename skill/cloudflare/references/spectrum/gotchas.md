@@ -1,8 +1,11 @@
 ## Troubleshooting
 
-### Issue: Connection timeouts
+## Common Errors
 
-**Diagnosis:**
+### "Connection timeouts"
+
+**Cause:** Origin firewall blocking Cloudflare IPs, origin service not running, or incorrect DNS configuration
+**Solution:**
 ```bash
 # Test connectivity to Spectrum app
 nc -zv app.example.com 22
@@ -13,30 +16,32 @@ dig app.example.com
 # Verify origin accepts Cloudflare IPs
 curl -v telnet://origin-ip:port
 ```
+Verify origin firewall allows Cloudflare IPs, check origin service running on correct port, ensure DNS record is CNAME
 
-**Solutions:**
-- Verify origin firewall allows Cloudflare IPs
-- Check origin service is running and listening on correct port
-- Ensure DNS record is CNAME (not A/AAAA unless using BYOIP)
+### "Client IP showing Cloudflare IP"
 
-### Issue: Client IP showing Cloudflare IP
-
-**Solution:** Enable Proxy Protocol
-
+**Cause:** Proxy Protocol not enabled or not configured on origin
+**Solution:** Enable Proxy Protocol and configure origin to parse headers:
 ```json
 {
   "proxy_protocol": "v1"  // TCP: v1 or v2; UDP: simple
 }
 ```
+Ensure origin application parses proxy protocol headers
 
-Ensure origin application parses proxy protocol headers.
+### "TLS errors"
 
-### Issue: TLS errors
-
-**Diagnosis:**
+**Cause:** Certificate mismatch or TLS configuration incorrect
+**Solution:**
 ```bash
 openssl s_client -connect app.example.com:443 -showcerts
 ```
+Use `tls: "flexible"` for testing or configure proper certificates
 
-**Solutions:**
-- `tls: "flexible"`
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Max apps per zone | Varies by plan | Check dashboard |
+| Supported protocols | TCP, UDP | Port range dependent |
+| Proxy Protocol | v1, v2, simple | TCP and UDP |

@@ -1,85 +1,65 @@
 # Bot Management Gotchas
 
-## Bot Score = 0
+## Common Errors
 
-**Cause**: Bot Management didn't run  
-**Reasons**: Internal Cloudflare request, Worker routing to zone (Orange-to-Orange), Request handled before BM (Redirect Rules, etc.)  
-**Solution**: Check request flow, ensure BM runs in request lifecycle
+### "Bot Score = 0"
 
-## JavaScript Detections Not Working
+**Cause:** Bot Management didn't run (internal Cloudflare request, Worker routing to zone (Orange-to-Orange), or request handled before BM (Redirect Rules, etc.))  
+**Solution:** Check request flow and ensure Bot Management runs in request lifecycle
 
-**Issue**: `js_detection.passed` always false or undefined  
-**Causes**:
-1. CSP headers don't allow `/cdn-cgi/challenge-platform/`
-2. Using on first page visit (needs HTML page first)
-3. Ad blockers or disabled JS
-4. JSD not enabled in dashboard
-5. Using Block action (must use Managed Challenge)
+### "JavaScript Detections Not Working"
 
-**CSP Fix**:
-```txt
-Content-Security-Policy: script-src 'self' /cdn-cgi/challenge-platform/;
-```
+**Cause:** `js_detection.passed` always false or undefined due to: CSP headers don't allow `/cdn-cgi/challenge-platform/`, using on first page visit (needs HTML page first), ad blockers or disabled JS, JSD not enabled in dashboard, or using Block action (must use Managed Challenge)  
+**Solution:** Add CSP header `Content-Security-Policy: script-src 'self' /cdn-cgi/challenge-platform/;` and ensure JSD is enabled with Managed Challenge action
 
-## False Positives
+### "False Positives (Legitimate Users Blocked)"
 
-**Issue**: Legitimate users blocked  
-**Solutions**:
-1. Check Bot Analytics for affected IPs/paths
-2. Identify detection source (ML, Heuristics, etc.)
-3. Create exception rule:
-```txt
-(cf.bot_management.score lt 30 and http.request.uri.path eq "/problematic-path")
-Action: Skip (Bot Management)
-```
-4. Or allowlist by IP/ASN/country
+**Cause:** Bot detection incorrectly flagging legitimate users  
+**Solution:** Check Bot Analytics for affected IPs/paths, identify detection source (ML, Heuristics, etc.), create exception rule like `(cf.bot_management.score lt 30 and http.request.uri.path eq "/problematic-path")` with Action: Skip (Bot Management), or allowlist by IP/ASN/country
 
-## False Negatives (Bots Not Caught)
+### "False Negatives (Bots Not Caught)"
 
-**Issue**: Bots bypassing detection  
-**Solutions**:
-1. Lower score threshold (30 → 50)
-2. Enable JavaScript Detections
-3. Add JA3/JA4 fingerprinting rules
-4. Use rate limiting as fallback
+**Cause:** Bots bypassing detection  
+**Solution:** Lower score threshold (30 → 50), enable JavaScript Detections, add JA3/JA4 fingerprinting rules, or use rate limiting as fallback
 
-## Verified Bot Blocked
+### "Verified Bot Blocked"
 
-**Issue**: Search engine bot blocked  
-**Causes**: WAF Managed Rules (not just Bot Management), Yandex bot during IP update (48h)  
-**Solution**: Create WAF exception for specific rule ID, verify bot via reverse DNS
+**Cause:** Search engine bot blocked by WAF Managed Rules (not just Bot Management) or Yandex bot during IP update (48h window)  
+**Solution:** Create WAF exception for specific rule ID and verify bot via reverse DNS
 
-## JA3/JA4 Missing
+### "JA3/JA4 Missing"
 
-**Issue**: `ja3Hash` or `ja4` is undefined  
-**Causes**: Non-HTTPS traffic, Worker routing traffic, Orange-to-Orange traffic via Worker, Bot Management skipped  
-**Solution**: Only available for HTTPS/TLS traffic; check request routing
+**Cause:** Non-HTTPS traffic, Worker routing traffic, Orange-to-Orange traffic via Worker, or Bot Management skipped  
+**Solution:** JA3/JA4 only available for HTTPS/TLS traffic; check request routing
 
-## Bot Score Limitations
+## Limits
 
-- Score = 0 means **not computed** (not score = 100)
-- First request may not have JSD data
-- Score doesn't guarantee 100% accuracy
-- False positives/negatives possible
+| Limit | Value | Notes |
+|-------|-------|-------|
+| Bot Score = 0 | Means not computed | Not score = 100 |
+| First request JSD data | May not be available | JSD data appears on subsequent requests |
+| Score accuracy | Not 100% guaranteed | False positives/negatives possible |
+| JSD on first HTML page visit | Not supported | Requires subsequent page load |
+| JSD requirements | JavaScript-enabled browser | Won't work with JS disabled or ad blockers |
+| JSD ETag stripping | Strips ETags from HTML responses | May affect caching behavior |
+| JSD CSP compatibility | Requires specific CSP | Not compatible with some CSP configurations |
+| JSD meta CSP tags | Not supported | Must use HTTP headers |
+| JSD WebSocket support | Not supported | WebSocket endpoints won't work with JSD |
+| JSD mobile app support | Native apps won't pass | Only works in browsers |
+| JA3/JA4 traffic type | HTTPS/TLS only | Not available for non-HTTPS traffic |
+| JA3/JA4 Worker routing | Missing for Worker-routed traffic | Check request routing |
+| JA3/JA4 uniqueness | Not unique per user | Shared by clients with same browser/library |
+| JA3/JA4 stability | Can change with updates | Browser/library updates affect fingerprints |
+| WAF custom rules (Free) | 5 | Varies by plan |
+| WAF custom rules (Pro) | 20 | Varies by plan |
+| WAF custom rules (Business) | 100 | Varies by plan |
+| WAF custom rules (Enterprise) | 1,000+ | Varies by plan |
+| Workers CPU time | Varies by plan | Applies to bot logic |
+| Bot Analytics sampling | 1-10% | May not capture all traffic |
+| Bot Analytics history | 30 days max | Historical data retention limit |
+| CSP requirements for JSD | Must allow `/cdn-cgi/challenge-platform/` | Required for JSD to function |
 
-## JavaScript Detections Limitations
-
-- Doesn't work on first HTML page visit
-- Requires JavaScript-enabled browser
-- Strips ETags from HTML responses
-- Not compatible with some CSP configurations
-- Not supported via `<meta>` CSP tags
-- Websocket endpoints not supported
-- Native mobile apps won't pass
-
-## JA3/JA4 Fingerprint Limitations
-
-- Only available for HTTPS/TLS traffic
-- Missing for Worker-routed traffic
-- Not unique per user (shared by clients with same browser/library)
-- Can change with browser/library updates
-
-## Plan Restrictions
+### Plan Restrictions
 
 | Feature | Free | Pro/Business | Enterprise |
 |---------|------|--------------|------------|
@@ -89,11 +69,3 @@ Action: Skip (Bot Management)
 | Corporate Proxy detection | No | No | Yes |
 | Verified bot categories | Limited | Limited | Full |
 | Custom WAF rules | 5 | 20/100 | 1,000+ |
-
-## Technical Constraints
-
-- Max 25 WAF custom rules on Free (varies by plan)
-- Workers CPU time limits apply to bot logic
-- Bot Analytics sampling (1-10%)
-- 30-day maximum history
-- CSP requirements for JSD (must allow `/cdn-cgi/challenge-platform/`)

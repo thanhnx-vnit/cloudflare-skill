@@ -1,34 +1,31 @@
 # Tunnel Gotchas
 
-## Common Issues
+## Common Errors
 
-### Error 1016 (Origin DNS Error)
+### "Error 1016 (Origin DNS Error)"
 
-**Cause**: Tunnel not running or not connected
-
-**Fix**:
+**Cause:** Tunnel not running or not connected
+**Solution:**
 ```bash
 cloudflared tunnel info my-tunnel     # Check status
 ps aux | grep cloudflared             # Verify running
 journalctl -u cloudflared -n 100      # Check logs
 ```
 
-### Certificate Errors
+### "Self-signed certificate rejected"
 
-**Issue**: Self-signed certs rejected
-
-**Fix**:
+**Cause:** Origin using self-signed certificate
+**Solution:**
 ```yaml
 originRequest:
   noTLSVerify: true      # Dev only
   caPool: /path/to/ca.pem  # Custom CA
 ```
 
-### Connection Timeouts
+### "Connection timeout"
 
-**Issue**: Origin slow to respond
-
-**Fix**:
+**Cause:** Origin slow to respond or timeout settings too low
+**Solution:**
 ```yaml
 originRequest:
   connectTimeout: 60s
@@ -36,14 +33,24 @@ originRequest:
   keepAliveTimeout: 120s
 ```
 
-### Tunnel Not Starting
+### "Tunnel not starting"
 
-**Check**:
+**Cause:** Invalid config, missing credentials, or tunnel doesn't exist
+**Solution:**
 ```bash
 cloudflared tunnel ingress validate  # Validate config
 ls -la ~/.cloudflared/*.json         # Verify credentials
 cloudflared tunnel list              # Verify tunnel exists
 ```
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Free tier | Unlimited tunnels | Unlimited traffic |
+| Tunnel replicas | 1000 per tunnel | Max concurrent |
+| Connection duration | No hard limit | Hours to days |
+| Long-lived connections | May drop during updates | WebSocket, SSH, UDP |
 
 ## Best Practices
 
@@ -74,13 +81,6 @@ cloudflared tunnel list              # Verify tunnel exists
 3. Graceful shutdown for config updates
 4. Keep `cloudflared` updated (1 year support)
 5. Use `--no-autoupdate` in prod; control updates manually
-
-## Limitations
-
-- **Free tier**: Unlimited tunnels and traffic
-- **Tunnel limit**: 1000 replicas per tunnel
-- **Connection duration**: No hard limit (hours to days)
-- **Long-lived connections**: Drop during replica updates (WebSocket, SSH, UDP)
 
 ## Debug Mode
 

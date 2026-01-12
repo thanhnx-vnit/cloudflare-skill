@@ -1,51 +1,66 @@
 # Gotchas & Troubleshooting
 
-## Schema Blocking Valid Reqs
+## Common Errors
 
-Firewall Events show violations? 1) Check details 2) Review schema (Settings) 3) Test Swagger Editor 4) Log mode 5) Update schema
+### "Schema validation blocking valid requests"
 
-Validated: date-time,time,date,email,hostname,ipv4/6,uri(-reference),iri(-reference),int32/64,float,double,password,uuid,byte,uint64
+**Cause:** Schema too restrictive, missing fields, or incorrect types
+**Solution:** 
+1. Check Firewall Events for violation details
+2. Review schema in Settings
+3. Test in Swagger Editor
+4. Use log mode to validate
+5. Update schema with correct specifications
 
-oneOf: Zero matches (missing discriminator), Multiple (ambiguous)
+### "JWT validation failing"
 
-## JWT Failing
+**Cause:** JWKS mismatch with IdP, expired token, wrong header/cookie name, or clock skew
+**Solution:** 
+1. Verify JWKS matches IdP configuration
+2. Check token `exp` claim is valid
+3. Confirm header/cookie name matches config
+4. Test token at jwt.io
+5. Account for clock skew
 
-1) JWKS match IdP? 2) `exp` valid? 3) Header/cookie name? 4) Test jwt.io 5) Clock skew?
+### "Endpoint discovery not finding APIs"
 
-## Discovery Missing
+**Cause:** Insufficient traffic (<500 reqs/10d), non-2xx responses, Worker direct requests, or incorrect session ID config
+**Solution:** Ensure 500+ requests in 10 days, 2xx responses from edge (not Workers direct), configure session IDs correctly. ML updates daily.
 
-Needs 500+ reqs/10d, 2xx from edge, not Workers direct. Check threshold, codes, session ID config. ML updates daily. Path norm: `/profile/238` → `/profile/{var1}`
+### "Sequence detection false positives"
 
-## Sequence False Positives
+**Cause:** Lookback window issues, non-unique session IDs, or model sensitivity
+**Solution:** Review lookback settings (10 reqs to managed endpoints, 10min window), ensure session ID uniqueness per user, adjust positive/negative model balance
 
-Lookback: 10 reqs to managed endpoints, 10min (contact for adjust). Check session ID uniqueness, neg vs pos model
+### "Token invalid"
 
-## Perf
+**Cause:** Configuration error, JWKS mismatch, or expired token
+**Solution:** Verify config matches IdP, update JWKS, check token expiration
 
-Schema: ~1-2ms, JWT: ~0.5-1ms, mTLS: ~2-5ms, Sequence: ~0.5ms
+### "Schema violation"
 
-## Best Practices
+**Cause:** Missing required fields, wrong data types, or spec mismatch
+**Solution:** Review schema against actual requests, ensure all required fields present, validate types match spec
 
-1. Discovery first (map before enforce)
-2. Progressive: Log → Block critical → Full
-3. Session IDs unique per user
-4. Validate schema (Swagger Editor)
-5. Automate JWKS rotation (Worker cron)
-6. Fallthrough rules (zombie APIs)
-7. Logpush + alerts
-8. Rate limit w/JWT claims
-9. Layer Bot Management
-10. Test staging
+### "Fallthrough"
+
+**Cause:** Unknown endpoint or pattern mismatch
+**Solution:** Update schema with all endpoints, check path pattern matching
+
+### "mTLS failed"
+
+**Cause:** Certificate untrusted/expired or wrong CA
+**Solution:** Verify cert chain, check expiration, confirm correct CA uploaded
 
 ## Limits
 
-Schema: OpenAPI v3.0.x only, no ext refs/non-basic paths, 10K ops, need `type`+`schema`, default `style`/`explode`, no `content` in params, no obj param validation, no `anyOf` in params
-JWT: Headers/cookies only, validates managed endpoints only
-Sequence (Beta): Needs endpoints+session ID, contact team
-
-## Errors
-
-"Token invalid": Config wrong, JWKS mismatch, expired
-"Schema violation": Missing fields, wrong types, spec mismatch
-"Fallthrough": Unknown endpoint, pattern mismatch
-"mTLS failed": Cert untrusted/expired, wrong CA
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| OpenAPI version | v3.0.x only | No external refs |
+| Schema operations | 10K max | Must have `type` + `schema` |
+| Validation sources | Headers/cookies only | For JWT |
+| Endpoint discovery | 500+ reqs/10d | Minimum for ML |
+| Path normalization | Automatic | `/profile/238` → `/profile/{var1}` |
+| Schema parameters | No `content` | No object param validation |
+| JWT managed endpoints | Validated only | Not all requests |
+| Sequence detection | Beta | Contact team to enable |

@@ -1,64 +1,63 @@
 # Gotchas & Best Practices
 
-## State
-DO: `setState()` (auto-syncs), serializable, limit size | DON'T: Mutate directly, large objects (SQL), functions/circular
+## Common Errors
+
+### "setState() not syncing"
+
+**Cause:** Mutating state directly or not calling `setState()` after modifications
+**Solution:** Always use `setState()` with immutable updates:
 ```ts
-// ❌ this.state.count++ | ✅ this.setState({...this.state, count: this.state.count + 1})
+// ❌ this.state.count++
+// ✅ this.setState({...this.state, count: this.state.count + 1})
 ```
 
-## SQL
-DO: Parameterized, create in `onStart()`, types | DON'T: Direct interpolation, assume exists
+### "SQL injection vulnerability"
+
+**Cause:** Direct string interpolation in SQL queries
+**Solution:** Use parameterized queries:
 ```ts
-// ❌ this.sql`...WHERE id = '${userId}'` | ✅ this.sql`...WHERE id = ${userId}`
+// ❌ this.sql`...WHERE id = '${userId}'`
+// ✅ this.sql`...WHERE id = ${userId}`
 ```
 
-## WebSocket
-DO: `conn.accept()`, errors, cleanup | DON'T: Forget accept (timeout), assume persist, sensitive in state
+### "WebSocket connection timeout"
+
+**Cause:** Not calling `conn.accept()` in `onConnect`
+**Solution:** Always accept connections:
 ```ts
 async onConnect(conn: Connection, ctx: ConnectionContext) { conn.accept(); conn.setState({userId: "123"}); }
 ```
 
-## Scheduling
-1000 tasks/agent, 1min min, persist. Clean old, descriptive names, handle failures
+### "Schedule limit exceeded"
+
+**Cause:** More than 1000 scheduled tasks per agent
+**Solution:** Clean up old schedules and limit creation rate:
 ```ts
 async checkSchedules() { if ((await this.getSchedules()).length > 800) console.warn("Near limit!"); }
 ```
 
-## AI
-Optimize: AI Gateway cache, rate limit, stream | Error: try/catch, fallback, quota/timeout
+### "AI Gateway unavailable"
+
+**Cause:** AI service timeout or quota exceeded
+**Solution:** Add error handling and fallbacks:
 ```ts
 try { return await this.env.AI.run(model, {prompt}); } catch (e) { return {error: "Unavailable"}; }
 ```
 
-## Perf
-State: Batch `setState()`, low-freq, SQL for large | Conns: Limit broadcast, selective, backpressure
+### "Agent not found"
 
-## Debug
-`npx wrangler dev` (local), `npx wrangler tail` (remote)
-Issues: "Agent not found" (DO binding), State not sync (`setState()`), Timeout (`conn.accept()`), SQL (create in `onStart()`)
-
-## Security
-DO: Validate, sanitize, auth WS, env secrets | DON'T: Trust headers, expose sensitive, unauth
-```ts
-async onConnect(conn: Connection, ctx: ConnectionContext) {
-  const token = ctx.request.headers.get("Authorization");
-  if (!await this.validateToken(token)) { conn.close(4001, "Unauthorized"); return; }
-  conn.accept();
-}
-```
+**Cause:** Durable Object binding missing or incorrect class name
+**Solution:** Verify DO binding in wrangler.jsonc and class name matches
 
 ## Limits
-CPU: 30s/req, Mem: 128MB/inst, Storage: SQL shares DO quota, Conns: no limit (watch mem), Schedules: 1000/agent
 
-## Migration
-`new_sqlite_classes`, test staging, no downgrade w/SQL, careful state
-```jsonc
-{
-  "migrations": [
-    {
-      "tag": "v1",
-      "new_sqlite_classes": ["MyAgent"]
-    }
-  ]
-}
-```
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| CPU per request | 30s | Default, max 300s |
+| Memory per instance | 128MB | Shared with WebSockets |
+| Storage per agent | Shares DO quota | 10GB max for SQLite |
+| Scheduled tasks | 1000 per agent | Clean up old tasks |
+| WebSocket connections | Unlimited | Within memory limits |
+| SQL columns | 100 | Per table |
+| SQL row size | 2MB | Key + value |
+| WebSocket message | 32MiB | Max size |

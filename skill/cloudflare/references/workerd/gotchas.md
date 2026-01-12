@@ -1,16 +1,18 @@
 # Workerd Gotchas
 
-## Configuration Errors
+## Common Errors
 
-### Missing Compat Date
-❌ **Wrong**:
+### "Missing compatibility date"
+**Cause:** Compatibility date not set
+**Solution:**
+❌ Wrong:
 ```capnp
 const worker :Workerd.Worker = (
   serviceWorkerScript = embed "worker.js"
 )
 ```
 
-✅ **Correct**:
+✅ Correct:
 ```capnp
 const worker :Workerd.Worker = (
   serviceWorkerScript = embed "worker.js",
@@ -80,29 +82,35 @@ bindings = [
 ]
 ```
 
-## Debugging Issues
+### "Worker not responding"
 
-### Worker Not Responding
-Check:
+**Cause:** Socket misconfigured, no fetch handler, port unavailable, or service name mismatch
+**Solution:** Check:
 1. Socket config: `address = "*:8080"`, service name matches
 2. Worker has `fetch()` handler
 3. Port available
 4. Service name in socket matches service definition
 
-### Binding Not Found
-Check:
+### "Binding not found"
+
+**Cause:** Binding name mismatch, service doesn't exist, or syntax error (env vs global)
+**Solution:** Check:
 1. Binding name in config matches code (`env.BINDING` or global)
 2. Service exists in config
 3. ES module vs service worker syntax (env vs global)
 
-### Module Not Found
-Check:
+### "Module not found"
+
+**Cause:** Module name doesn't match import, incorrect embed path, or invalid ES module syntax
+**Solution:** Check:
 1. Module name in config matches import path
 2. `embed` path correct
 3. ES module syntax valid (no CommonJS in `.mjs`)
 
-### Compatibility Errors
-Check:
+### "Compatibility error"
+
+**Cause:** Compatibility date not set, API not available on date, or required flags missing
+**Solution:** Check:
 1. `compatibilityDate` set
 2. API available on that date ([docs](https://developers.cloudflare.com/workers/configuration/compatibility-dates/))
 3. Required flags enabled (`compatibilityFlags`)
@@ -189,6 +197,14 @@ When updating `compatibilityDate`:
 
 ### Version Mismatch
 Workerd version = max compat date supported. If `compatibilityDate = "2025-01-01"` but workerd is v1.20241201.0, it fails. Update workerd binary.
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| V8 flags | Unsupported in production | Use with caution |
+| Compatibility date | Must match workerd version | Update if mismatch |
+| Module count | Affects startup time | Many imports slow |
 
 ## Troubleshooting Steps
 

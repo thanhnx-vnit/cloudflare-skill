@@ -5,6 +5,32 @@
 - Clean up outdated content regularly
 - Monitor Vectorize index limits
 
+## Common Errors
+
+### "Indexing failed"
+
+**Cause:** Unsupported file format, file too large, or invalid content
+**Solution:** Verify file format supported, check file size limits, ensure content valid
+
+### "API token invalid"
+
+**Cause:** Token expired, revoked, or wrong permissions
+**Solution:** Create new API token with correct permissions (AI Search - Read, AI Search Edit)
+
+### "Query returned no results"
+
+**Cause:** Index not complete, query too specific, or no matching content
+**Solution:** Wait for indexing to complete, broaden query terms, check indexed content
+
+## Limits
+
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Max file size | Varies by format | Check docs |
+| Max files per instance | Varies by plan | Monitor dashboard |
+| API token quota | Per account | Create with minimal perms |
+| Vectorize index | Shared limits | Monitor usage |
+
 ## Configuration via Dashboard
 
 ### 1. Create Instance
@@ -38,4 +64,4 @@ AI Search → Select instance → Use AI Search → API
 ### 5. Connect to Application
 ```
 AI Search → Select instance → Connect
-C
+```

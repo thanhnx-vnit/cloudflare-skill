@@ -1,10 +1,11 @@
 # DDoS Gotchas
 
-## False Positives
+## Common Errors
 
-**Symptom**: Legitimate traffic blocked/challenged
+### "False positives blocking legitimate traffic"
 
-**Diagnosis**:
+**Cause:** Sensitivity too high, wrong action, or missing exceptions
+**Solution:**
 ```typescript
 // Query GraphQL API for flagged requests
 const query = `
@@ -30,17 +31,15 @@ const query = `
 `;
 ```
 
-**Fix**:
 1. Lower sensitivity for specific rule/category
 2. Use `log` action first to validate (Enterprise Advanced)
 3. Add exception with custom expression (e.g., allowlist IPs)
-4. Reduce category sensitivity: `{ category: "http-flood", sensitivity_level: "low" }`
+4. Or allowlist by IP/ASN/country
 
-## Attacks Getting Through
+### "Attacks getting through"
 
-**Cause**: Sensitivity too low, wrong action
-
-**Fix**:
+**Cause:** Sensitivity too low or wrong action
+**Solution:**
 ```typescript
 // Increase to default (high) sensitivity
 const config = {
@@ -55,43 +54,44 @@ const config = {
 };
 ```
 
-## Adaptive Rules Not Working
+### "Adaptive rules not working"
 
-**Cause**: Insufficient traffic history (needs 7 days)
+**Cause:** Insufficient traffic history (needs 7 days)
+**Solution:** Wait for baseline to establish, check dashboard for adaptive rule status
 
-**Fix**: Wait for baseline to establish, check dashboard for adaptive rule status
+### "Zone override ignored"
 
-## Zone vs Account Override Conflict
+**Cause:** Account overrides conflict with zone overrides
+**Solution:** Configure at zone level OR remove zone overrides to use account-level
 
-**Issue**: Account overrides ignored when zone has overrides
+### "Log action not available"
 
-**Solution**: Configure at zone level OR remove zone overrides to use account-level
+**Cause:** Not on Enterprise Advanced DDoS plan
+**Solution:** Use `managed_challenge` with low sensitivity for testing
 
-## Log Action Not Available
+### "Rule limit exceeded"
 
-**Cause**: Not on Enterprise Advanced DDoS plan
+**Cause:** Too many override rules (Free/Pro/Business: 1, Enterprise Advanced: 10)
+**Solution:** Combine conditions in single expression using `and`/`or`
 
-**Workaround**: Use `managed_challenge` with low sensitivity for testing
+### "Cannot override rule"
 
-## Rule Limit Exceeded
+**Cause:** Rule is read-only
+**Solution:** Check API response for read-only indicator, use different rule
 
-**Plans**:
-- Free/Pro/Business: 1 override rule only
-- Enterprise Advanced: Up to 10 rules
+### "Cannot disable DDoS protection"
 
-**Workaround**: Combine conditions in single expression using `and`/`or`
+**Cause:** DDoS managed rulesets cannot be fully disabled (always-on protection)
+**Solution:** Set `sensitivity_level: "eoff"` for minimal mitigation
 
-## Read-only Managed Rules
+## Limits
 
-**Issue**: Some rules cannot be overridden
-
-**Check**: API response indicates if rule is read-only
-
-## Always-on Protection
-
-**Reality**: DDoS managed rulesets cannot be fully disabled
-
-**Minimum**: Set `sensitivity_level: "eoff"` for minimal mitigation
+| Resource/Limit | Value | Notes |
+|----------------|-------|-------|
+| Override rules (Free/Pro/Business) | 1 | Per zone |
+| Override rules (Enterprise Advanced) | 10 | Per zone |
+| Traffic history for adaptive | 7 days | Required |
+| Sensitivity levels | eoff, low, medium, default, high | Configurable |
 
 ## Tuning Strategy
 
