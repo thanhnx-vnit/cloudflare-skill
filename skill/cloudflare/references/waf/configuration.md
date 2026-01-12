@@ -9,7 +9,7 @@ While Wrangler primarily manages Workers, WAF configuration is typically done vi
 **Related Wrangler Operations**:
 - Deploy Workers that benefit from WAF protection
 - Configure zone settings that complement WAF
-- Use `wrangler.toml` for environment-specific configurations
+- Use `wrangler.jsonc` for environment-specific configurations
 
 **Example: Using Cloudflare API from Worker**:
 ```typescript

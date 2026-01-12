@@ -172,25 +172,35 @@ export MINIFLARE_WORKERD_PATH="/path/to/workerd"
 wrangler dev
 ```
 
-**wrangler.toml**:
-```toml
-name = "my-worker"
-main = "src/index.js"
-compatibility_date = "2025-01-01"  # Use current date for new projects
-compatibility_flags = ["nodejs_compat"]
-
-[[kv_namespaces]]
-binding = "CACHE"
-id = "abc123"
-
-[[r2_buckets]]
-binding = "STORAGE"
-bucket_name = "my-bucket"
-
-[[durable_objects.bindings]]
-name = "ROOMS"
-class_name = "Room"
-script_name = "my-worker"
+**wrangler.jsonc**:
+```jsonc
+{
+  "name": "my-worker",
+  "main": "src/index.js",
+  "compatibility_date": "2025-01-01",  // Use current date for new projects
+  "compatibility_flags": ["nodejs_compat"],
+  "kv_namespaces": [
+    {
+      "binding": "CACHE",
+      "id": "abc123"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "STORAGE",
+      "bucket_name": "my-bucket"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "ROOMS",
+        "class_name": "Room",
+        "script_name": "my-worker"
+      }
+    ]
+  }
+}
 ```
 
 ## C++ Embedder API

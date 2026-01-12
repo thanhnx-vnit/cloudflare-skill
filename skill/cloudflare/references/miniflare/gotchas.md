@@ -154,13 +154,13 @@ wrangler dev
 ```js
 new Miniflare({
   scriptPath: "dist/worker.js",
-  // Manually configure bindings (doesn't read wrangler.toml)
+  // Manually configure bindings (doesn't read wrangler.jsonc)
   kvNamespaces: ["KV"],
   bindings: { API_KEY: "..." },
 });
 ```
 
-**Note:** Miniflare doesn't read `wrangler.toml` - configure everything via API.
+**Note:** Miniflare doesn't read `wrangler.jsonc` - configure everything via API.
 
 ### From Miniflare 2 to 3
 

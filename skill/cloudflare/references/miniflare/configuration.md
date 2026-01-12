@@ -198,6 +198,6 @@ siteExclude: ["node_modules/**"],
 
 ## CLI Options
 
-Miniflare doesn't read `wrangler.toml` - configure via API. For wrangler.toml configs, manually translate to Miniflare options.
+Miniflare doesn't read `wrangler.jsonc` - configure via API. For wrangler.jsonc configs, manually translate to Miniflare options.
 
 See [api.md](./api.md) for full API reference.

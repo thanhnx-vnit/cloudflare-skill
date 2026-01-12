@@ -13,8 +13,8 @@ export default {
 };
 ```
 
-```toml
-name = "backend-api"; [placement]; mode = "smart"; [[d1_databases]]; binding = "DATABASE"
+```jsonc
+{ "name": "backend-api", "placement": { "mode": "smart" }, "d1_databases": [{ "binding": "DATABASE" }] }
 ```
 
 ## Frontend + Backend Split
@@ -56,8 +56,8 @@ export default {
 };
 ```
 
-```toml
-[placement]; mode = "smart"; hint = "enam"  # If API in East North America
+```jsonc
+{ "placement": { "mode": "smart", "hint": "enam" } }  // If API in East North America
 ```
 
 ## Multi-Service Aggregation

@@ -226,3 +226,29 @@ Started: 2026-01-12
   - Standard config examples now consistently use 2025-01-01
   - Comments guide users to use current dates for new projects
   - Pattern: Update examples, preserve feature requirements
+
+## Task - fix-3
+- Converted all wrangler.toml examples to wrangler.jsonc format
+- Files changed: 33 files across references/
+- Changes:
+  - Removed all ```toml code blocks, replaced with ```jsonc
+  - Converted TOML syntax to JSONC (name = "value" → "name": "value")
+  - Converted TOML arrays ([[workflows]]) to JSONC arrays ("workflows": [])
+  - Converted TOML numbers (cpu_ms = 300_000 → "cpu_ms": 300000, no underscores)
+  - Converted comments (# → //)
+  - Updated all text references "wrangler.toml" → "wrangler.jsonc"
+  - Where both TOML and JSONC existed, removed TOML and kept only JSONC
+- Key conversions:
+  - workflows/configuration.md: removed duplicate TOML examples
+  - static-assets/configuration.md: removed TOML, kept JSONC
+  - zaraz/SKILL.md: converted zaraz.toml to zaraz.jsonc
+  - secrets-store/configuration.md: converted env-specific config
+  - smart-placement/patterns.md: converted inline config examples
+  - observability/gotchas.md: updated grep command to use jq with JSONC
+- Net change: +300 lines added, -272 lines removed
+- **Learnings:**
+  - Systematic conversion: TOML → JSONC across all reference files
+  - JSONC enables schema validation (v3.91.0+)
+  - Parallel task agent execution for bulk conversions
+  - Text references in prose also need updating (README links, error messages, CLI examples)
+  - One acceptable dual-format reference remains in pipelines (wrangler.toml/wrangler.jsonc)

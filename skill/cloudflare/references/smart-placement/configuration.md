@@ -1,19 +1,6 @@
 # Smart Placement Configuration
 
-## wrangler.toml Setup
-
-```toml
-# Basic Smart Placement
-[placement]
-mode = "smart"
-
-# With placement hint (preferred region)
-[placement]
-mode = "smart"
-hint = "wnam"  # West North America
-```
-
-## wrangler.json/wrangler.jsonc
+## wrangler.jsonc Setup
 
 ```jsonc
 {
@@ -45,31 +32,38 @@ Optional region hints guide Smart Placement decisions:
 
 ### Frontend Worker (No Smart Placement)
 
-```toml
-# frontend-worker/wrangler.toml
-name = "frontend"
-main = "frontend-worker.ts"
-
-# No [placement] - runs at edge
-
-[[services]]
-binding = "BACKEND"
-service = "backend-api"
+```jsonc
+// frontend-worker/wrangler.jsonc
+{
+  "name": "frontend",
+  "main": "frontend-worker.ts",
+  // No "placement" - runs at edge
+  "services": [
+    {
+      "binding": "BACKEND",
+      "service": "backend-api"
+    }
+  ]
+}
 ```
 
 ### Backend Worker (Smart Placement Enabled)
 
-```toml
-# backend-api/wrangler.toml
-name = "backend-api"
-main = "backend-worker.ts"
-
-[placement]
-mode = "smart"
-
-[[d1_databases]]
-binding = "DATABASE"
-database_id = "xxx"
+```jsonc
+// backend-api/wrangler.jsonc
+{
+  "name": "backend-api",
+  "main": "backend-worker.ts",
+  "placement": {
+    "mode": "smart"
+  },
+  "d1_databases": [
+    {
+      "binding": "DATABASE",
+      "database_id": "xxx"
+    }
+  ]
+}
 ```
 
 ## Requirements & Limitations

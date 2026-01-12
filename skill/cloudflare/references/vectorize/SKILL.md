@@ -112,12 +112,7 @@ npx wrangler vectorize list-vectors <index-name> \
 }
 ```
 
-**wrangler.toml:**
-```toml
-[[vectorize]]
-binding = "VECTORIZE"  # Available as env.VECTORIZE
-index_name = "production-index"
-```
+
 
 ### TypeScript Types
 

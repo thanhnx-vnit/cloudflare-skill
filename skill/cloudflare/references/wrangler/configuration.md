@@ -1,6 +1,6 @@
 # Wrangler Configuration
 
-Configuration reference for wrangler.jsonc (recommended) and wrangler.toml.
+Configuration reference for wrangler.jsonc (recommended).
 
 ## Config Format
 

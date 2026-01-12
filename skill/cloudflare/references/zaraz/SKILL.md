@@ -240,19 +240,24 @@ window.zaraz.dataLayer = {
 
 ## Server-Side Configuration
 
-### zaraz.toml
+### zaraz.jsonc
 
-```toml
-[settings]
-auto_inject = true
-debug_mode = false
-
-[[tools]]
-type = "google-analytics"
-id = "G-XXXXXXXXXX"
-
-[[tools.triggers]]
-match_rule = "Pageview"
+```jsonc
+{
+  "settings": {
+    "auto_inject": true,
+    "debug_mode": false
+  },
+  "tools": [
+    {
+      "type": "google-analytics",
+      "id": "G-XXXXXXXXXX",
+      "triggers": [
+        { "match_rule": "Pageview" }
+      ]
+    }
+  ]
+}
 ```
 
 ## Privacy Features

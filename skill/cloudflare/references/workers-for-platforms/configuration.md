@@ -13,12 +13,7 @@
 }
 ```
 
-### wrangler.toml
-```toml
-[[dispatch_namespaces]]
-binding = "DISPATCHER"
-namespace = "production"
-```
+
 
 ### With Outbound Worker
 ```jsonc

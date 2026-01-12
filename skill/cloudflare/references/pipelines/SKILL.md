@@ -122,14 +122,7 @@ npx wrangler pipelines streams create my-stream
 
 ### Via Workers (Recommended)
 
-**Configuration** (`wrangler.toml`):
-```toml
-[[pipelines]]
-pipeline = "<STREAM_ID>"
-binding = "STREAM"
-```
-
-**Or JSON** (`wrangler.jsonc`):
+**Configuration** (`wrangler.jsonc`):
 ```jsonc
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
@@ -597,14 +590,18 @@ npx wrangler pipelines create ecommerce-pipeline \
          WHERE event_type IN ('purchase', 'add_to_cart', 'view_product')"
 ```
 
-**3. Configure Worker** (`wrangler.toml`):
-```toml
-name = "ecommerce-api"
-main = "src/index.ts"
-
-[[pipelines]]
-pipeline = "<STREAM_ID>"
-binding = "EVENTS"
+**3. Configure Worker** (`wrangler.jsonc`):
+```jsonc
+{
+  "name": "ecommerce-api",
+  "main": "src/index.ts",
+  "pipelines": [
+    {
+      "pipeline": "<STREAM_ID>",
+      "binding": "EVENTS"
+    }
+  ]
+}
 ```
 
 **4. Send events** (`src/index.ts`):

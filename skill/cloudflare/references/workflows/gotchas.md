@@ -4,7 +4,7 @@
 
 ### Step Timeout
 - **Default**: 10 min/attempt
-- **CPU Limit**: 30s default, max 5min (wrangler.toml `limits.cpu_ms = 300_000`)
+- **CPU Limit**: 30s default, max 5min (wrangler.jsonc `"limits": {"cpu_ms": 300000}`)
 
 ```typescript
 await step.do('long operation', {timeout: '30 minutes'}, async () => { /* ... */ });

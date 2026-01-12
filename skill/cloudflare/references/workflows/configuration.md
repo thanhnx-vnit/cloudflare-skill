@@ -1,31 +1,23 @@
 # Workflow Configuration
 
-## Wrangler Setup
+## wrangler.jsonc Setup
 
-**wrangler.toml:**
-```toml
-name = "my-worker"
-main = "src/index.ts"
-compatibility_date = "2025-01-01"  # Use current date for new projects
-
-[[workflows]]
-name = "my-workflow"           # Workflow name
-binding = "MY_WORKFLOW"        # Env binding
-class_name = "MyWorkflow"      # TS class name
-# script_name = "other-worker" # For cross-script calls
-
-[limits]
-cpu_ms = 300_000  # 5 min max (default 30s)
-```
-
-**wrangler.jsonc:**
 ```jsonc
 {
   "name": "my-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-01",  // Use current date for new projects
   "workflows": [
-    { "name": "my-workflow", "binding": "MY_WORKFLOW", "class_name": "MyWorkflow" }
+    {
+      "name": "my-workflow",           // Workflow name
+      "binding": "MY_WORKFLOW",        // Env binding
+      "class_name": "MyWorkflow"      // TS class name
+      // "script_name": "other-worker" // For cross-script calls
+    }
   ],
-  "limits": { "cpu_ms": 300000 }
+  "limits": {
+    "cpu_ms": 300000  // 5 min max (default 30s)
+  }
 }
 ```
 
@@ -143,35 +135,50 @@ export class DataProcessing extends WorkflowEntrypoint<Env, DataParams> {
 }
 ```
 
-```toml
-[[workflows]]
-name = "user-onboarding"
-binding = "USER_ONBOARDING"
-class_name = "UserOnboarding"
-
-[[workflows]]
-name = "data-processing"
-binding = "DATA_PROCESSING"
-class_name = "DataProcessing"
+```jsonc
+{
+  "workflows": [
+    {
+      "name": "user-onboarding",
+      "binding": "USER_ONBOARDING",
+      "class_name": "UserOnboarding"
+    },
+    {
+      "name": "data-processing",
+      "binding": "DATA_PROCESSING",
+      "class_name": "DataProcessing"
+    }
+  ]
+}
 ```
 
 ## Cross-Script Bindings
 
 **billing-worker** defines workflow:
-```toml
-[[workflows]]
-name = "billing-workflow"
-binding = "BILLING"
-class_name = "BillingWorkflow"
+```jsonc
+{
+  "workflows": [
+    {
+      "name": "billing-workflow",
+      "binding": "BILLING",
+      "class_name": "BillingWorkflow"
+    }
+  ]
+}
 ```
 
 **web-api-worker** calls it:
-```toml
-[[workflows]]
-name = "billing-workflow"
-binding = "BILLING"
-class_name = "BillingWorkflow"
-script_name = "billing-worker"
+```jsonc
+{
+  "workflows": [
+    {
+      "name": "billing-workflow",
+      "binding": "BILLING",
+      "class_name": "BillingWorkflow",
+      "script_name": "billing-worker"
+    }
+  ]
+}
 ```
 
 See: [api.md](./api.md), [patterns.md](./patterns.md)

@@ -53,7 +53,7 @@ export class MyWorkflow extends WorkflowEntrypoint<Env, Params> {
 - **Idempotency**: Check-then-execute patterns
 
 ## In This Reference
-- [configuration.md](./configuration.md) - wrangler.toml setup, step config
+- [configuration.md](./configuration.md) - wrangler.jsonc setup, step config
 - [api.md](./api.md) - Step APIs, instance management, state
 - [patterns.md](./patterns.md) - Common workflows, orchestration patterns
 - [gotchas.md](./gotchas.md) - Timeouts, limits, debugging strategies

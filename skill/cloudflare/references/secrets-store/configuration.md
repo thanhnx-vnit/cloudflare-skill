@@ -94,16 +94,21 @@ wrangler deploy # Uses production secrets
 
 Best practice: Separate names for local/prod:
 
-```toml
-[env.development]
-secrets_store_secrets = [
-  { binding = "API_KEY", store_id = "store", secret_name = "dev_api_key" }
-]
-
-[env.production]
-secrets_store_secrets = [
-  { binding = "API_KEY", store_id = "store", secret_name = "prod_api_key" }
-]
+```jsonc
+{
+  "env": {
+    "development": {
+      "secrets_store_secrets": [
+        { "binding": "API_KEY", "store_id": "store", "secret_name": "dev_api_key" }
+      ]
+    },
+    "production": {
+      "secrets_store_secrets": [
+        { "binding": "API_KEY", "store_id": "store", "secret_name": "prod_api_key" }
+      ]
+    }
+  }
+}
 ```
 
 ## Dashboard

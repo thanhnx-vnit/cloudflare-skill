@@ -95,14 +95,8 @@ interface TailItem {
 
 ### Configuration
 
-**Producer Worker wrangler.toml:**
-```toml
-name = "my-producer-worker"
-tail_consumers = [{service = "my-tail-worker"}]
-```
-
 **Producer Worker wrangler.jsonc:**
-```json
+```jsonc
 {
   "name": "my-producer-worker",
   "tail_consumers": [
@@ -113,10 +107,12 @@ tail_consumers = [{service = "my-tail-worker"}]
 }
 ```
 
-**Tail Worker wrangler.toml:**
-```toml
-name = "my-tail-worker"
-# No special config needed, just must have tail() handler
+**Tail Worker wrangler.jsonc:**
+```jsonc
+{
+  "name": "my-tail-worker"
+  // No special config needed, just must have tail() handler
+}
 ```
 
 ## Common Use Cases
@@ -352,14 +348,16 @@ wrangler tail <producer-worker-name>
 
 ### Update Producer Configuration
 ```bash
-# Edit wrangler.toml to add tail_consumers
+# Edit wrangler.jsonc to add tail_consumers
 wrangler deploy
 ```
 
 ### Remove Tail Consumer
-```toml
-# Remove from wrangler.toml or set empty array
-tail_consumers = []
+```jsonc
+// Remove from wrangler.jsonc or set empty array
+{
+  "tail_consumers": []
+}
 ```
 
 ## TypeScript Types

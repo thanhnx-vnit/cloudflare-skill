@@ -15,7 +15,7 @@
 
 ## Bindings Not Working
 
-1. **wrangler.toml syntax**: Check for TOML errors
+1. **wrangler.jsonc syntax**: Check for JSON errors
 2. **Binding IDs**: Verify correct (especially for KV/D1/R2)
 3. **Local dev**: Check `.dev.vars` exists and has correct values
 4. **Regenerate types**: `npx wrangler types --path='./functions/types.d.ts'`
@@ -36,7 +36,7 @@
 1. **File count**: Max 20,000 files per deployment
 2. **File size**: Max 25MB per file
 3. **Build errors**: Check build output in logs
-4. **wrangler.toml validation**: `npx wrangler pages project validate`
+4. **wrangler.jsonc validation**: `npx wrangler pages project validate`
 5. **Bindings**: Verify all referenced bindings exist
 
 ## Middleware Not Running
@@ -66,13 +66,13 @@
 
 1. **Generate types**: `npx wrangler types` before dev
 2. **tsconfig**: Point `types` to generated file
-3. **Env interface**: Must match wrangler.toml bindings
+3. **Env interface**: Must match wrangler.jsonc bindings
 4. **Type imports**: `import type { PagesFunction } from '@cloudflare/workers-types'`
 
 ## Local Dev Issues
 
 1. **Port conflicts**: Use `--port=3000` to change
-2. **Bindings**: Must pass via CLI flags or wrangler.toml
+2. **Bindings**: Must pass via CLI flags or wrangler.jsonc
 3. **Persistence**: Use `--persist-to` to keep data between restarts
 4. **Hot reload**: May need manual restart for some changes
 5. **HTTPS**: Local dev uses HTTP, production uses HTTPS (affects cookies, etc.)
@@ -130,7 +130,7 @@ npx wrangler pages deployment tail --project-name=my-project
 
 **"Module not found"**: Check build output, ensure dependencies bundled
 
-**"Binding not found"**: Verify wrangler.toml and regenerate types
+**"Binding not found"**: Verify wrangler.jsonc and regenerate types
 
 **"Request exceeded CPU limit"**: Optimize hot paths, use Workers for heavy compute
 

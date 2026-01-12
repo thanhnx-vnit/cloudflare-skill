@@ -265,29 +265,35 @@ export default {
 
 ### Enable TCP Sockets
 
-```toml
-# wrangler.toml
-name = "private-network-worker"
-main = "src/index.ts"
-compatibility_date = "2025-01-01"  # Use current date for new projects
-
-# No special configuration needed - TCP sockets are available by default
-# in Workers runtime
-
-[env.production]
-routes = [
-  { pattern = "api.example.com/*", zone_name = "example.com" }
-]
+```jsonc
+// wrangler.jsonc
+{
+  "name": "private-network-worker",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-01",  // Use current date for new projects
+  // No special configuration needed - TCP sockets are available by default
+  // in Workers runtime
+  "env": {
+    "production": {
+      "routes": [
+        { "pattern": "api.example.com/*", "zone_name": "example.com" }
+      ]
+    }
+  }
+}
 ```
 
 ### Environment Variables for Endpoints
 
-```toml
-[vars]
-DB_HOST = "10.0.1.50"
-DB_PORT = "5432"
-API_HOST = "internal-api.private.net"
-API_PORT = "8080"
+```jsonc
+{
+  "vars": {
+    "DB_HOST": "10.0.1.50",
+    "DB_PORT": "5432",
+    "API_HOST": "internal-api.private.net",
+    "API_PORT": "8080"
+  }
+}
 ```
 
 ```typescript
@@ -311,10 +317,13 @@ export default {
 
 Auto-locate Workers near backend services:
 
-```toml
-# wrangler.toml
-[placement]
-mode = "smart"
+```jsonc
+// wrangler.jsonc
+{
+  "placement": {
+    "mode": "smart"
+  }
+}
 ```
 
 ```typescript
@@ -331,11 +340,16 @@ export default {
 
 For PostgreSQL/MySQL, use Hyperdrive instead of raw TCP sockets:
 
-```toml
-# wrangler.toml
-[[hyperdrive]]
-binding = "DB"
-id = "<HYPERDRIVE_ID>"
+```jsonc
+// wrangler.jsonc
+{
+  "hyperdrive": [
+    {
+      "binding": "DB",
+      "id": "<HYPERDRIVE_ID>"
+    }
+  ]
+}
 ```
 
 ```typescript

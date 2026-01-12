@@ -157,7 +157,7 @@ npm create cloudflare@latest -- --template=cloudflare/templates/workers-template
 my-app/
 ├── src/
 │   └── index.ts       # Worker entry point
-├── wrangler.toml      # Configuration
+├── wrangler.jsonc     # Configuration
 ├── package.json
 ├── tsconfig.json
 └── README.md
@@ -207,7 +207,7 @@ C3 generates:
 1. **Use latest C3:** `npm create cloudflare@latest`
 2. **Choose TypeScript** for type safety
 3. **Enable git** for version control
-4. **Review generated wrangler.toml** before first deploy
+4. **Review generated wrangler.jsonc** before first deploy
 5. **Update dependencies** post-creation: `npm update`
 
 ## Common Workflows
@@ -227,7 +227,7 @@ npm create cloudflare@latest my-app -- \
   --git
 cd my-app
 npx wrangler d1 create my-db
-# Add to wrangler.toml, then:
+# Add to wrangler.jsonc, then:
 npm run deploy
 ```
 
@@ -255,7 +255,7 @@ npm create cloudflare@latest . -- --existing-script=./dist/index.js
 ### Deployment fails
 
 - Check Cloudflare account authentication: `wrangler login`
-- Verify `wrangler.toml` configuration
+- Verify `wrangler.jsonc` configuration
 - Check for naming conflicts in dashboard
 
 ## Reference

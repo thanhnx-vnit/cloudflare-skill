@@ -487,26 +487,33 @@ const envSchema = z.object({
 export const config = envSchema.parse(process.env);
 ```
 
-## Wrangler Configuration
+## wrangler.jsonc Configuration
 
-```toml
-# wrangler.toml
-name = "turn-credentials-api"
-main = "src/index.ts"
-compatibility_date = "2025-01-01"  # Use current date for new projects
-
-[vars]
-TURN_KEY_ID = "your-turn-key-id"
-
-[[env.production.kv_namespaces]]
-binding = "CREDENTIALS_CACHE"
-id = "your-kv-namespace-id"
-
-[env.production]
-vars = { ENVIRONMENT = "production" }
-
-# Store TURN_KEY_SECRET in secrets
-# wrangler secret put TURN_KEY_SECRET
+```jsonc
+// wrangler.jsonc
+{
+  "name": "turn-credentials-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-01",  // Use current date for new projects
+  "vars": {
+    "TURN_KEY_ID": "your-turn-key-id"
+  },
+  "env": {
+    "production": {
+      "kv_namespaces": [
+        {
+          "binding": "CREDENTIALS_CACHE",
+          "id": "your-kv-namespace-id"
+        }
+      ],
+      "vars": {
+        "ENVIRONMENT": "production"
+      }
+    }
+  }
+  // Store TURN_KEY_SECRET in secrets
+  // wrangler secret put TURN_KEY_SECRET
+}
 ```
 
 ## Security Best Practices

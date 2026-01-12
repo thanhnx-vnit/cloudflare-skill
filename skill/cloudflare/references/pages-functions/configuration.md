@@ -1,6 +1,6 @@
 # Configuration
 
-## wrangler.json / wrangler.toml
+## wrangler.jsonc
 
 ```jsonc
 {

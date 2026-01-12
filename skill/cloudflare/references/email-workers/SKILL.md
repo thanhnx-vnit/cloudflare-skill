@@ -228,7 +228,7 @@ export default {
 };
 ```
 
-## Wrangler Configuration
+## wrangler.jsonc Configuration
 
 ### Minimal Config (Local Dev)
 
@@ -325,7 +325,7 @@ Visit `http://localhost:8787/` to trigger. Check terminal for `.eml` file path.
 
 1. Enable Email Routing in Cloudflare dashboard
 2. Add verified destination address
-3. Configure wrangler.toml
+3. Configure wrangler.jsonc
 
 ### Deploy
 

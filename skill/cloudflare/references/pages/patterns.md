@@ -134,12 +134,12 @@ Set to subproject path (e.g., `apps/web`). Only builds when files in that dir ch
 
 ### Security
 1. Set security headers in `_headers` for static
-2. Use secrets, never commit to wrangler.toml
+2. Use secrets, never commit to wrangler.jsonc
 3. Validate all inputs
 4. Rate limit with KV/DO
 
 ### Workflow
 1. Preview deployments per branch/PR
 2. Local dev: `npx wrangler pages dev ./dist`
-3. Environment-specific configs in `wrangler.toml`
+3. Environment-specific configs in `wrangler.jsonc`
 4. Rollbacks: Dashboard → Deployments → Rollback (instant)

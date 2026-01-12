@@ -208,7 +208,7 @@
         "No wrangler.toml examples remain",
         "All config uses wrangler.jsonc"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "fix-4",

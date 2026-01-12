@@ -35,11 +35,14 @@ This maintains fast, reactive frontends while optimizing backend latency.
 
 ## Quick Start
 
-```toml
-# wrangler.toml
-[placement]
-mode = "smart"
-hint = "wnam"  # Optional: West North America
+```jsonc
+// wrangler.jsonc
+{
+  "placement": {
+    "mode": "smart",
+    "hint": "wnam"  // Optional: West North America
+  }
+}
 ```
 
 Deploy and wait 15 minutes for analysis. Check status via API or dashboard metrics.
@@ -78,7 +81,7 @@ wrangler tail your-worker-name --header cf-placement
 
 ## In This Reference
 
-- [configuration.md](./configuration.md) - wrangler.toml setup, placement hints, dashboard config
+- [configuration.md](./configuration.md) - wrangler.jsonc setup, placement hints, dashboard config
 - [api.md](./api.md) - Placement Status API, cf-placement header, monitoring
 - [patterns.md](./patterns.md) - Frontend/backend split, database workers, SSR patterns
 - [gotchas.md](./gotchas.md) - Troubleshooting INSUFFICIENT_INVOCATIONS, performance issues

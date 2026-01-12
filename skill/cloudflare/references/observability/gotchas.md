@@ -12,7 +12,7 @@
 **Solution**:
 ```bash
 # Verify config
-cat wrangler.toml | grep -A 5 observability
+cat wrangler.jsonc | jq '.observability'
 
 # Check deployment
 wrangler deployments list <WORKER_NAME>

@@ -173,7 +173,7 @@ pulumi import cloudflare:index/r2Bucket:R2Bucket my-bucket <account_id>/<bucket_
 Use `pulumi import` and rewrite configs in Pulumi DSL.
 
 ### From Wrangler
-1. Create Pulumi resources matching wrangler.toml
+1. Create Pulumi resources matching wrangler.jsonc
 2. Import existing resources
 3. Verify with `pulumi preview`
 4. Switch to Pulumi for deployments

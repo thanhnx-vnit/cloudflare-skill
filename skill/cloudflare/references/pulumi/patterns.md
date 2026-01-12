@@ -107,11 +107,11 @@ const route = new cloudflare.WorkerRoute("route", {zoneId, pattern: `${domain}/*
 ## Wrangler Integration
 
 ```typescript
-// Match wrangler.toml bindings in Pulumi
+// Match wrangler.jsonc bindings in Pulumi
 const worker = new cloudflare.WorkerScript("worker", {
     accountId, name: "my-worker", content: code,
-    compatibilityDate: "2024-01-01", compatibilityFlags: ["nodejs_compat"],
-    kvNamespaceBindings: [{name: "MY_KV", namespaceId: kv.id}], // Must match wrangler.toml
+    compatibilityDate: "2025-01-01", compatibilityFlags: ["nodejs_compat"],
+    kvNamespaceBindings: [{name: "MY_KV", namespaceId: kv.id}], // Must match wrangler.jsonc
 });
 ```
 

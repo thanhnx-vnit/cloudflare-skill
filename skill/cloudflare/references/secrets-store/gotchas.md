@@ -79,7 +79,7 @@ Error: Binding 'API_KEY' already exists
 
 Fix:
 1. Remove duplicate from dashboard Settings → Bindings
-2. Check `wrangler.toml` vs dashboard conflicts
+2. Check `wrangler.jsonc` vs dashboard conflicts
 3. Delete old Worker secret: `wrangler secret delete API_KEY`
 
 ### Quota Exceeded
